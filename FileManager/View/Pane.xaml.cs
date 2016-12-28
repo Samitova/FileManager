@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileManager.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,18 @@ namespace FileManager.View
     /// </summary>
     public partial class Pane : UserControl
     {
+        internal PaneViewModel _pane;
+
         public Pane()
         {
-            InitializeComponent();
+            _pane = new PaneViewModel();
+            DataContext = _pane;
+            InitializeComponent();            
+        }
+
+        private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            _pane.OpenCurrentItem(dataGrid.CurrentItem as MyDirInfo);
         }
     }
 }

@@ -55,7 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\FileSystemExplorerService.cs" />
+    <Compile Include="Model\FileSystemProvider.cs" />
     <Compile Include="ViewModel\MyDirInfo.cs" />
     <Compile Include="ViewModel\MyDirectoryType.cs" />
     <Compile Include="ViewModel\PaneViewModel.cs" />

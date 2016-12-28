@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FileManager.Model
 {
-    public class FileSystemExplorerService
+    public class FileSystemProvider
     {
 
         /// <summary>
@@ -18,6 +18,15 @@ namespace FileManager.Model
         public static IList<DriveInfo> GetLocalDrivers()
         {
             return DriveInfo.GetDrives().ToList();
+        }
+
+        /// <summary>
+        /// Get the root of directory
+        /// </summary>
+        /// <returns>Return the list of local drivers</returns>
+        public static DirectoryInfo GetRootDirectory(string path)
+        {
+            return new DirectoryInfo(path);            
         }
 
 

@@ -21,13 +21,13 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <!--Display the  left side pane -->
-            <view:Pane x:Name="LeftPane" Grid.Column="0" Grid.Row="0" Loaded="LeftPane_Loaded"></view:Pane>
+            <view:Pane x:Name="LeftPane" Grid.Column="0" Grid.Row="0"></view:Pane>
 
             <!-- Pane splitter-->
             <GridSplitter Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" Width="3" Background="Gray"/>
 
             <!--Display the right side pane-->
-            <view:Pane x:Name="RightPane"  Grid.Column="1" Grid.Row="0" Loaded="RightPane_Loaded"></view:Pane>
+            <view:Pane x:Name="RightPane"  Grid.Column="1" Grid.Row="0" ></view:Pane>
         </Grid>       
     </Grid>
 </Window>

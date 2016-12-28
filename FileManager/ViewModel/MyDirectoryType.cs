@@ -9,6 +9,7 @@ namespace FileManager.ViewModel
     public enum MyDirectoryType
     {        
         Directory,
-        File
+        File,
+        Driver
     }
 }

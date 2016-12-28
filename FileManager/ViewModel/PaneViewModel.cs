@@ -8,25 +8,50 @@ using System.Threading.Tasks;
 
 namespace FileManager.ViewModel
 {
-    class PaneViewModel
+    class PaneViewModel : ViewModelBase
     {
-        public string[] LogicalDrivers { get; set; }
-        public string CurrentDriver { get; set; }
-
-        public MyDirInfo CurrentItem { get; set; }
-
-        private MyDirInfo _currentDirectory;
-
+        private MyDirInfo _currentDriver;
+        private IList<MyDirInfo> _drivers;
+        private MyDirInfo _currentItem;
         private IList<MyDirInfo> _currentItems;
 
-        public MyDirInfo CurrentDirectory
+        public MyDirInfo CurrentItem
         {
-            get { return _currentDirectory; }
+            get { return _currentItem; }
             set
             {
-                _currentDirectory = value;
+                _currentItem = value;
                 RefreshCurrentItems();
-                //OnPropertyChanged("CurrentDirectory");
+                OnPropertyChanged("CurrentItem");
+            }
+        }
+
+        public MyDirInfo CurrentDriver
+        {
+            get { return _currentDriver; }
+            set
+            {
+                _currentDriver = value;
+                CurrentItem = _currentDriver;
+                //RefreshDrivers();
+                OnPropertyChanged("CurrentDriver");
+            }
+        }
+
+        public IList<MyDirInfo> LogicalDrivers
+        {
+            get
+            {
+                if (_drivers == null)
+                {
+                    _drivers = new List<MyDirInfo>();
+                }
+                return _drivers;
+            }
+            set
+            {
+                _drivers = value;
+                OnPropertyChanged("LogicalDrivers");
             }
         }
 
@@ -46,47 +71,68 @@ namespace FileManager.ViewModel
             set
             {
                 _currentItems = value;
-                //OnPropertyChanged("CurrentItems");
+                OnPropertyChanged("CurrentItems");
             }
         }
 
         public PaneViewModel()
-        {           
-            CurrentDirectory = new MyDirInfo(new DirectoryInfo(@"c:\"));
+        {
+            RefreshDrivers();
+            CurrentDriver = new MyDirInfo(new DriveInfo(@"c:\"));
+            CurrentItem = CurrentDriver;
         }
 
         public PaneViewModel(string driver)
         {
-            CurrentDirectory = new MyDirInfo(new DirectoryInfo(driver));
+            CurrentDriver = new MyDirInfo(new DriveInfo(driver));
+            CurrentItem = CurrentDriver;
+        }
+
+        /// <summary>
+        /// Get the children of current directory and stores them in the CurrentItems Observable collection
+        /// </summary>
+        protected void RefreshDrivers()
+        {
+            LogicalDrivers = FileSystemProvider.GetLocalDrivers().Select(dir => new MyDirInfo(dir)).ToList();
         }
 
         /// <summary>
         /// Get the children of current directory and stores them in the CurrentItems Observable collection
         /// </summary>
         protected void RefreshCurrentItems()
-        {
+        {           
+            
             IList<MyDirInfo> childrenDirList = new List<MyDirInfo>();
             IList<MyDirInfo> childrenFileList = new List<MyDirInfo>();
 
-            childrenDirList = FileSystemExplorerService.GetChildDirectories(CurrentDirectory.Path).Select(dir => new MyDirInfo(dir)).ToList();
+            childrenDirList = FileSystemProvider.GetChildDirectories(CurrentItem.Path).Select(dir => new MyDirInfo(dir)).ToList();
 
-            childrenFileList = FileSystemExplorerService.GetChildFiles(CurrentDirectory.Path).Select(dir => new MyDirInfo(dir)).ToList();
-
-            CurrentItems = childrenDirList.Concat(childrenFileList).ToList(); 
-        }
-
-        /// <summary>
-        /// processes the current object. If this is a file then open it or if it is a directory then return its subdirectories
-        /// </summary>
-        public void OpenCurrentItem()
-        {           
-            if ((MyDirectoryType)CurrentItem.Type  == MyDirectoryType.File)
+            childrenFileList = FileSystemProvider.GetChildFiles(CurrentItem.Path).Select(dir => new MyDirInfo(dir)).ToList();
+            if ((MyDirectoryType)CurrentItem.Type == MyDirectoryType.Driver)
             {
-                System.Diagnostics.Process.Start(CurrentItem.Path);
+                CurrentItems = childrenDirList.Concat(childrenFileList).ToList();
             }
             else
             {
-                
+                childrenDirList.Add(new MyDirInfo(new DirectoryInfo(CurrentItem.Root)));
+                childrenDirList
+            }
+
+            
+        }
+
+        /// <summary>
+        /// Execure the current object. If it is the file then open; if it is the directory then return its subdirectories
+        /// </summary>
+        public void OpenCurrentItem(MyDirInfo selectedItem)
+        {
+            if ((MyDirectoryType)selectedItem.Type == MyDirectoryType.File)
+            {
+                System.Diagnostics.Process.Start(selectedItem.Path);
+            }
+            else
+            {
+                CurrentItem = selectedItem;
             }
         }
 

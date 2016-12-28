@@ -21,28 +21,23 @@ namespace FileManager
     /// </summary>
     public partial class MainWindow : Window
     {
-        internal PaneViewModel _leftPane;
-        internal PaneViewModel _rightPane;
+        //internal PaneViewModel _leftPane;
+        //internal PaneViewModel _rightPane;
 
         public MainWindow()
         {
-            _leftPane = new PaneViewModel();
-            _rightPane = new PaneViewModel(@"d:\");
-            InitializeComponent();
-            Loaded += new RoutedEventHandler(LeftPane_Loaded);
-            Loaded += new RoutedEventHandler(RightPane_Loaded);
+            //_leftPane = new PaneViewModel();
+           // _rightPane = new PaneViewModel(@"d:\");
+            InitializeComponent();           
+           // Loaded += new RoutedEventHandler(RightPane_Loaded);
         }
 
       
 
-        private void LeftPane_Loaded(object sender, RoutedEventArgs e)
-        {
-            LeftPane.DataContext = _leftPane;
-        }
 
         private void RightPane_Loaded(object sender, RoutedEventArgs e)
         {
-            RightPane.DataContext = _rightPane;
+            //RightPane.DataContext = _rightPane;
         }
     }
 }

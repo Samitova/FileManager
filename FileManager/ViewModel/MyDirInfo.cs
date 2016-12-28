@@ -27,6 +27,13 @@ namespace FileManager.ViewModel
             set { SetValue(childrenProperty, value); }
         }
 
+        public static readonly DependencyProperty propertyIsSelected = DependencyProperty.Register("IsSelected", typeof(bool), typeof(MyDirInfo));
+        public bool IsSelected
+        {
+            get { return (bool)GetValue(propertyIsSelected); }
+            set { SetValue(propertyIsSelected, value); }
+        }
+
         public MyDirInfo()
         {
             SubDirectories = new List<MyDirInfo>();
@@ -59,6 +66,21 @@ namespace FileManager.ViewModel
             Ext = file.Extension;
             Date = file.LastAccessTime.ToString("dd.MM.yy HH:mm");
             Icon = "Images/file.png";
-        }       
+        }
+
+        public MyDirInfo(DriveInfo drive): this()
+        {
+            if (drive.Name.EndsWith(@"\"))
+            {
+                Name = drive.Name.Substring(0, drive.Name.Length - 1);
+            }
+            else
+            {
+                Name = drive.Name;
+            }                
+
+            Path = drive.Name;
+            Type = (int)MyDirectoryType.Driver;
+        }
     }
 }
