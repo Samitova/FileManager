@@ -21,14 +21,22 @@ namespace FileManager.Model
         }
 
         /// <summary>
-        /// Get the root of directory
+        /// Get the directory
         /// </summary>
         /// <returns>Return the list of local drivers</returns>
-        public static DirectoryInfo GetRootDirectory(string path)
+        public static DirectoryInfo GetDirectory(string path)
         {
             return new DirectoryInfo(path);            
         }
 
+        /// <summary>
+        /// Get the directory
+        /// </summary>
+        /// <returns>Return the list of local drivers</returns>
+        public static FileInfo GetFile(string path)
+        {
+            return new FileInfo(path);
+        }
 
         /// <summary>
         /// Get the list of files 

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace FileManager.ViewModel
 {
-    public enum MyDirectoryType
-    {        
+    public enum SystemType
+    {
+        Driver,
         Directory,
-        File,
-        Driver
+        File        
     }
 }

@@ -57,7 +57,7 @@
     </ApplicationDefinition>
     <Compile Include="Model\FileSystemProvider.cs" />
     <Compile Include="ViewModel\MyDirInfo.cs" />
-    <Compile Include="ViewModel\MyDirectoryType.cs" />
+    <Compile Include="ViewModel\SystemType.cs" />
     <Compile Include="ViewModel\PaneViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="View\Pane.xaml.cs">

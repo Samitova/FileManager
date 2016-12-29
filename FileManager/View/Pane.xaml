@@ -39,7 +39,7 @@
                   Background="White"/>
 
         <DataGrid Grid.Row="1" x:Name="dataGrid"                      
-                ItemsSource="{Binding CurrentItems}"  
+                ItemsSource="{Binding VisibleItems}"  
                 HeadersVisibility="Column"                           
 				HorizontalScrollBarVisibility="Disabled" 
 				VerticalScrollBarVisibility="Auto" 
@@ -85,12 +85,18 @@
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Name" Width="*"  IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" Text="{Binding Name}">
+                        <DataTemplate>                           
+                            <TextBlock x:Name="nameTextBlock" VerticalAlignment="Center" Padding="20,0,0,0" Text="{Binding Name}">
                                 <TextBlock.Background>
                                     <ImageBrush AlignmentX="Left" Stretch="Uniform" ImageSource="{Binding Icon}" TileMode="None" />
                                 </TextBlock.Background>
                             </TextBlock>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding Name}" Value="">
+                                    <Setter TargetName="nameTextBlock" Property ="Text"  Value="[...]"></Setter>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                            
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
