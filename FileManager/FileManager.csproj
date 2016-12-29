@@ -57,14 +57,13 @@
     </ApplicationDefinition>
     <Compile Include="Model\FileSystemProvider.cs" />
     <Compile Include="ViewModel\MyDirInfo.cs" />
-    <Compile Include="ViewModel\SystemType.cs" />
+    <Compile Include="ViewModel\MyDriveInfo.cs" />
+    <Compile Include="ViewModel\MyFileInfo.cs" />
     <Compile Include="ViewModel\PaneViewModel.cs" />
+    <Compile Include="ViewModel\SystemFileItem.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="View\Pane.xaml.cs">
       <DependentUpon>Pane.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Window1.xaml.cs">
-      <DependentUpon>Window1.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -79,10 +78,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="View\Pane.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Window1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

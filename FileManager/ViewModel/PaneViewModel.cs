@@ -10,12 +10,13 @@ namespace FileManager.ViewModel
 {
     class PaneViewModel : ViewModelBase
     {
-        private MyDirInfo _currentDriver;
-        private IList<MyDirInfo> _drivers;
-        private MyDirInfo _currentItem;
-        private IList<MyDirInfo> _visibleItems;
 
-        public MyDirInfo CurrentItem
+        private SystemFileItem _currentDriver;
+        private IList<SystemFileItem> _drivers;
+        private SystemFileItem _currentItem;
+        private IList<SystemFileItem> _visibleItems;
+
+        public SystemFileItem CurrentItem
         {
             get { return _currentItem; }
             set
@@ -26,7 +27,7 @@ namespace FileManager.ViewModel
             }
         }
 
-        public MyDirInfo CurrentDriver
+        public SystemFileItem CurrentDriver
         {
             get { return _currentDriver; }
             set
@@ -38,13 +39,13 @@ namespace FileManager.ViewModel
             }
         }
 
-        public IList<MyDirInfo> LogicalDrivers
+        public IList<SystemFileItem> LogicalDrivers
         {
             get
             {
                 if (_drivers == null)
                 {
-                    _drivers = new List<MyDirInfo>();
+                    _drivers = new List<SystemFileItem>();
                 }
                 return _drivers;
             }
@@ -58,13 +59,13 @@ namespace FileManager.ViewModel
         /// <summary>
         /// Children of the current directory 
         /// </summary>
-        public IList<MyDirInfo> VisibleItems
+        public IList<SystemFileItem> VisibleItems
         {
             get
             {
                 if (_visibleItems == null)
                 {
-                    _visibleItems = new List<MyDirInfo>();
+                    _visibleItems = new List<SystemFileItem>();
                 }
                 return _visibleItems;
             }
@@ -78,16 +79,16 @@ namespace FileManager.ViewModel
         public PaneViewModel()
         {
             RefreshDrivers();
-            CurrentDriver = new MyDirInfo(new DriveInfo(@"c:\"));
+            CurrentDriver = new MyDriveInfo(FileSystemProvider.(@"c:\"));
             CurrentItem = CurrentDriver;
-        }       
+        }
 
         /// <summary>
         /// Get the children of current directory and stores them in the CurrentItems Observable collection
         /// </summary>
         protected void RefreshDrivers()
-        {
-            LogicalDrivers = FileSystemProvider.GetLocalDrivers().Select(dir => new MyDirInfo(dir)).ToList();
+        { 
+            LogicalDrivers = FileSystemProvider.GetLocalDrivers().Select(dir => new MyDriveInfo(dir)).ToList<SystemFileItem>();               
         }
 
         /// <summary>
@@ -96,45 +97,41 @@ namespace FileManager.ViewModel
         protected void RefreshVisibleItems()
         {
 
-            IList<MyDirInfo> childrenDirList = new List<MyDirInfo>();
-            IList<MyDirInfo> childrenFileList = new List<MyDirInfo>();
+            IList<SystemFileItem> childrenDirList = new List<SystemFileItem>();           
 
-            if ((SystemType)CurrentItem.Type != SystemType.Driver)
+            if (CurrentItem is MyDirInfo)
             {
                 CurrentItem.Name = "[...]";
                 childrenDirList.Add(CurrentItem);
-            }                
-
-            childrenFileList = FileSystemProvider.GetChildFiles(CurrentItem.Path).Select(dir => new MyDirInfo(dir)).ToList();
-            childrenDirList = childrenDirList.Concat(FileSystemProvider.GetChildDirectories(CurrentItem.Path).Select(dir => new MyDirInfo(dir)).ToList()).ToList();
-            VisibleItems = childrenDirList.Concat(childrenFileList).ToList();
+            }            
+           
+            childrenDirList = childrenDirList.Concat(FileSystemProvider.GetChildrenDirectories(CurrentItem.Path).Select(dir => new MyDirInfo(dir)).ToList<SystemFileItem>()).ToList();
+            VisibleItems = childrenDirList.Concat(FileSystemProvider.GetChildrenFiles(CurrentItem.Path).Select(dir => new MyFileInfo(dir)).ToList<SystemFileItem>()).ToList();
 
         }
 
         /// <summary>
         /// Execure the current object. If it is the file then open; if it is the directory then return its subdirectories
         /// </summary>
-        public void OpenCurrentItem(MyDirInfo selectedItem)
+        public void OpenCurrentItem(SystemFileItem selectedItem)
         {
-            if ((SystemType)selectedItem.Type == SystemType.File)
+            if (selectedItem is MyFileInfo)
             {
                 System.Diagnostics.Process.Start(selectedItem.Path);
             }
-            else
-            {
+           
                 if (CurrentItem == selectedItem && !selectedItem.Root.EndsWith(@"\"))
                 {
                     CurrentItem = new MyDirInfo(new DirectoryInfo(selectedItem.Root));
                 }
                 else if (CurrentItem == selectedItem)
                 {
-                    CurrentItem = new MyDirInfo(new DriveInfo(selectedItem.Root));
+                    CurrentItem = new MyDriveInfo(new DriveInfo(selectedItem.Root));
                 }
                 else
                 {
                     CurrentItem = selectedItem;
-                }
-            }
+                }            
         }
 
     }

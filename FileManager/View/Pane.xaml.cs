@@ -32,7 +32,7 @@ namespace FileManager.View
 
         private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            _pane.OpenCurrentItem(dataGrid.CurrentItem as MyDirInfo);
+            _pane.OpenCurrentItem(dataGrid.CurrentItem as SystemFileItem);
         }
     }
 }
