@@ -25,20 +25,22 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
-        
-        <ComboBox Grid.Row="0" x:Name="driverBox"
-                  ItemsSource="{Binding LogicalDrivers}"
-                  DisplayMemberPath="Name"                 
-                  
-                  SelectedItem="{Binding CurrentDriver, Mode=TwoWay}"
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <ComboBox  x:Name="driveBox" 
+                  ItemsSource="{Binding LogicalDrives}"
+                  DisplayMemberPath="Name"              
+                  SelectedItem="{Binding CurrentDrive, Mode=TwoWay}"
                   SelectedIndex="0"
                   HorizontalAlignment="Left" Margin="2,2,0,0"
-                  VerticalAlignment="Top" Width="120" 
-                  Background="White"/>
+                  VerticalAlignment="Top" Width="49" 
+                  Background="White" Height="22"/>
+            <Label x:Name="pathLabel" Content="{Binding CurrentItem.Path}" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Top" Width="242" Height="25"/>
+        </StackPanel>
 
-        <DataGrid Grid.Row="1" x:Name="dataGrid"                      
+        <DataGrid Grid.Row="2" x:Name="dataGrid"                      
                 ItemsSource="{Binding VisibleItems}"  
                 HeadersVisibility="Column"                           
 				HorizontalScrollBarVisibility="Disabled" 
@@ -51,8 +53,13 @@
 				IsSynchronizedWithCurrentItem="True" 
 				RowDetailsVisibilityMode="Collapsed" BorderBrush="{x:Null}" 
 				Background="White"
-				RowHeight="20"
-				x:FieldModifier="private" MouseDoubleClick="dataGrid_MouseDoubleClick">
+				RowHeight="20"   
+                Margin="0,2,0,0"
+				x:FieldModifier="private"                 
+                KeyDown="dataGrid_KeyDown" 
+                PreviewMouseLeftButtonUp="dataGrid_PreviewMouseLeftButtonUp"
+                PreviewMouseDoubleClick="dataGrid_PreviewMouseDoubleClick" 
+                SelectionChanged="dataGrid_SelectionChanged" >
 
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
@@ -83,22 +90,29 @@
             </DataGrid.RowStyle>
 
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Name" Width="*"  IsReadOnly="True">
+                <DataGridTemplateColumn Header="Name" Width="*"  IsReadOnly="False">
                     <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>                           
+                        <DataTemplate>
                             <TextBlock x:Name="nameTextBlock" VerticalAlignment="Center" Padding="20,0,0,0" Text="{Binding Name}">
                                 <TextBlock.Background>
                                     <ImageBrush AlignmentX="Left" Stretch="Uniform" ImageSource="{Binding Icon}" TileMode="None" />
                                 </TextBlock.Background>
                             </TextBlock>
-                            <DataTemplate.Triggers>
-                                <DataTrigger Binding="{Binding Name}" Value="">
-                                    <Setter TargetName="nameTextBlock" Property ="Text"  Value="[...]"></Setter>
-                                </DataTrigger>
-                            </DataTemplate.Triggers>
-                            
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
+
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Width="16" Source="{Binding Icon}"></Image>
+                                <TextBox VerticalAlignment="Center" Padding="2,0,5,0" Text="{Binding Name, Mode=TwoWay}" BorderBrush="{x:Null}" 
+                                         Background="White" 
+                                         TextChanged="TextBoxTextChanged" 
+                                         PreviewKeyDown="TextBox_PreviewKeyDown">
+                                </TextBox>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
 
                 <DataGridTemplateColumn Header="Ext" Width="60" IsReadOnly="True">
@@ -124,7 +138,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-
+                
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

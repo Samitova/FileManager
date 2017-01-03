@@ -15,7 +15,7 @@ namespace FileManager.Model
         /// Get the local drivers of the system
         /// </summary>
         /// <returns>Return the list of local drivers</returns>
-        public static IList<DriveInfo> GetLocalDrivers()
+        public static IList<DriveInfo> GetLocalDrives()
         {
             return DriveInfo.GetDrives().ToList();
         }
@@ -24,9 +24,9 @@ namespace FileManager.Model
         /// Get the  drive by name
         /// </summary>
         /// <returns>Driveinfo</returns>
-        public static DriveInfo GetLocalDrivers(string path)
+        public static DriveInfo GetDrive(string path)
         {
-            return DriveInfo.GetDrive(name);
+            return new DriveInfo(path);
         }
 
         /// <summary>
@@ -55,9 +55,8 @@ namespace FileManager.Model
         public static IList<FileInfo> GetChildrenFiles(string path)
         {
             try
-            {
-                DirectoryInfo dir = new DirectoryInfo(path);
-                return dir.GetFiles().ToList();
+            {               
+                return new DirectoryInfo(path).GetFiles().ToList();
             }
 
             catch (Exception e)
@@ -66,7 +65,6 @@ namespace FileManager.Model
             }
 
             return new List<FileInfo>();
-
         }
 
 
@@ -79,8 +77,7 @@ namespace FileManager.Model
         {
             try
             {
-                DirectoryInfo dir = new DirectoryInfo(path);
-                return dir.GetDirectories().ToList();
+                return new DirectoryInfo(path).GetDirectories().ToList();
             }
             catch (Exception e)
             {

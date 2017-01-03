@@ -9,13 +9,13 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="900">
 
-    <Grid x:Name="OuterGrid" >
-        
+    <Grid x:Name="OuterGrid">
+
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="36"></RowDefinition>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" x:Name="ManagerGrid">
+        <Grid Grid.Row="0" x:Name="ManagerGrid" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -28,6 +28,13 @@
 
             <!--Display the right side pane-->
             <view:Pane x:Name="RightPane"  Grid.Column="1" Grid.Row="0" ></view:Pane>
-        </Grid>       
+        </Grid>
+        <Label x:Name="label" Content="F4 Cut" HorizontalAlignment="Left" Margin="10,5,0,0" Grid.Row="1" VerticalAlignment="Top" Width="56"/>
+        <Label x:Name="label_Copy" Content="F5 Copy" HorizontalAlignment="Left" Margin="60,5,0,0" Grid.Row="1" VerticalAlignment="Top" Width="56" RenderTransformOrigin="1.589,0.462"/>
+        <Label x:Name="label_Copy1" Content="F6 Paste" HorizontalAlignment="Left" Margin="119,5,0,0" Grid.Row="1" VerticalAlignment="Top" Width="56"/>
+        <Label x:Name="label_Copy2" Content="F7 Create" HorizontalAlignment="Left" Margin="182,5,0,0" Grid.Row="1" VerticalAlignment="Top" Width="72"/>
+        <Label x:Name="label_Copy3" Content="F8 Delete" HorizontalAlignment="Left" Margin="248,5,0,0" Grid.Row="1" VerticalAlignment="Top" Width="72"/>
+        <Label x:Name="label_Copy4" Content="F9 Rename" HorizontalAlignment="Left" Margin="317,5,0,0" Grid.Row="1" VerticalAlignment="Top" Width="72"/>
+        <Label x:Name="label_Copy5" Content="F10 Details" HorizontalAlignment="Left" Margin="395,5,0,0" Grid.Row="1" VerticalAlignment="Top" Width="72"/>
     </Grid>
 </Window>
