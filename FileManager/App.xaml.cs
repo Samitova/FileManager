@@ -21,13 +21,6 @@ namespace FileManager
 
             Manager window = new Manager();
 
-            // ViewModel to bind the main window 
-           // ShellViewModel viewModel = new ShellViewModel();
-
-            // Allow all controls in the window to bind to the ViewModel by setting the 
-            // DataContext, which propagates down the element tree.
-           // window.DataContext = viewModel;
-
             window.Show();
         }
     }

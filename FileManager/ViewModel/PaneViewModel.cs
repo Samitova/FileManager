@@ -108,8 +108,6 @@ namespace FileManager.ViewModel
             }
         }
 
-       
-
         /// <summary>
         /// Get the children of current directory and stores them in the CurrentItems Observable collection
         /// </summary>
@@ -159,9 +157,18 @@ namespace FileManager.ViewModel
             }
         }
 
-        public void Cut()
+        public void Move(IList<SystemFileItem> selectedItems)
         {
-            throw new NotImplementedException();
+            string[] messageParams = new string[] { "Do you want to move ", "to", DirectoryToCopy, "?" };
+            MessageBoxResult resultDeleteConformation = MessageBox.Show(BuildMassege(selectedItems, messageParams), "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (resultDeleteConformation == MessageBoxResult.Yes)
+            {
+                foreach (SystemFileItem item in selectedItems)
+                {
+                    item.Move(DirectoryToCopy);
+                }
+            }
+            RefreshVisibleItems();
         }
 
         /// <summary>
@@ -178,15 +185,15 @@ namespace FileManager.ViewModel
             {
                 foreach (SystemFileItem item in selectedItems)
                 {
-                    item.Delete();          
+                    item.Delete();
                 }
             }
             RefreshVisibleItems();
         }
-     
+
         public void Copy(IList<SystemFileItem> selectedItems)
         {
-            string[] messageParams = new string [] { "Do you want to copy ", "to", DirectoryToCopy, "?" };
+            string[] messageParams = new string[] { "Do you want to copy ", "to", DirectoryToCopy, "?" };
 
             MessageBoxResult resultDeleteConformation = MessageBox.Show(BuildMassege(selectedItems, messageParams), "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (resultDeleteConformation == MessageBoxResult.Yes)
@@ -199,9 +206,10 @@ namespace FileManager.ViewModel
             RefreshVisibleItems();
         }
 
-        public void Create()
+        public void Create(string dirName)
         {
-            
+            CurrentItem.Create(dirName);
+            RefreshVisibleItems();
         }
 
         public void Rename(string newName)
@@ -209,7 +217,7 @@ namespace FileManager.ViewModel
             if (SelectedItem != null)
             {
                 SelectedItem.Rename(newName);
-            }            
+            }
             RefreshVisibleItems();
         }
 

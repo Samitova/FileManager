@@ -17,7 +17,8 @@ namespace FileManager.ViewModel
             Path = dir.FullName;
             Size = "<dir>";
             Ext = "";
-            Date = dir.LastAccessTime.ToString("dd.MM.yy HH:mm");
+            CreationDate = dir.CreationTime.ToString("dd.MM.yy HH:mm");
+            LastAcssesDate = dir.LastAccessTime.ToString("dd.MM.yy HH:mm");
             Icon = @"Images/folder.png";
         }
 
@@ -84,6 +85,32 @@ namespace FileManager.ViewModel
             }
         }
 
+        /// <summary>
+        /// Get details of dir
+        /// </summary>
+        public override void GetDetails()
+        {
+            StringBuilder builder = new StringBuilder();
+           
+            builder.AppendLine(string.Format("{0, -20} {1, -15}", "Directory Name:", Name));
+            builder.AppendLine(string.Format("{0, -26} {1, -15}", "Location:", Parent)); 
+            builder.AppendLine(string.Format("{0, -30} {1, -15}", "Size:", CalculateDirSize()));
+            builder.AppendLine(string.Format("{0, -22} {1, -15}", "Creation Date:", CreationDate)); 
+            builder.AppendLine(string.Format("{0, -20} {1, -15}", "Last Acsses Date:", LastAcssesDate));            
+
+            MessageBox.Show(builder.ToString(), "Directory details");
+        }
+
+        /// <summary>
+        /// Calculate size of all files in directory
+        /// </summary>
+        /// <returns></returns>
+        private string CalculateDirSize()
+        {
+            DirectoryInfo dir = new DirectoryInfo(Path);
+            return (dir.GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length)/ 1024).ToString() + " KB";
+        }
+
         public override void Delete()
         {
             try
@@ -104,21 +131,21 @@ namespace FileManager.ViewModel
             }
         }
 
-        public override void Rename(string newName)
-        {
-            string newDirName = System.IO.Path.Combine(Parent, newName);
-            if (Path == newDirName) return;
-            RenameDir(newDirName);
-        }
-
         /// <summary>
         /// Move directory
         /// </summary>
         /// <param name="targetDir">target dir</param>
         public override void Move(string targetDir)
         {
-            string pathToCopy = System.IO.Path.Combine(targetDir, Name + Ext);
+            string pathToCopy = System.IO.Path.Combine(targetDir, Name);
             RenameDir(pathToCopy);
+        }
+
+        public override void Rename(string newName)
+        {
+            string newDirName = System.IO.Path.Combine(Parent, newName);
+            if (Path == newDirName) return;
+            RenameDir(newDirName);
         }
 
         /// <summary>
@@ -134,13 +161,46 @@ namespace FileManager.ViewModel
                     MessageBoxResult resultConformation = MessageBox.Show("Folder with such name is allready existed. Do you want to replace it?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                     if (resultConformation == MessageBoxResult.Yes)
                     {
-                        Directory.Delete(newName);
+                        Directory.Delete(newName, true);
                         Directory.Move(Path, newName);
                     }
                 }
                 else
                 {
                     Directory.Move(Path, newName);
+                }
+            }
+            catch (IOException ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+        }
+
+        public override void Create(string dirName)
+        {
+            string pathToCreate = System.IO.Path.Combine(Path, dirName);
+            try
+            {
+                if (Directory.Exists(pathToCreate))
+                {
+                    MessageBoxResult resultConformation = MessageBox.Show("Folder with such name is allready existed. Do you want to replace it?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (resultConformation == MessageBoxResult.Yes)
+                    {
+                        Directory.Delete(pathToCreate, true);
+                        Directory.CreateDirectory(pathToCreate);
+                    }
+                }
+                else
+                {
+                    Directory.CreateDirectory(pathToCreate);
                 }
             }
             catch (IOException ex)

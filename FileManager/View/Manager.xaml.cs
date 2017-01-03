@@ -20,8 +20,10 @@ namespace FileManager.View
     /// </summary>
     public partial class Manager : Window
     {
+       
+
         public Manager()
-        {           
+        {
             InitializeComponent();           
         }
      
@@ -34,5 +36,7 @@ namespace FileManager.View
         {
             RightPane.SetCopyDir(LeftPane._pane.CurrentItem.Path);
         }
+
+       
     }
 }
