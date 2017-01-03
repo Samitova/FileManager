@@ -55,11 +55,9 @@
 				Background="White"
 				RowHeight="20"   
                 Margin="0,2,0,0"
-				x:FieldModifier="private"                 
-                KeyDown="dataGrid_KeyDown" 
-                PreviewMouseLeftButtonUp="dataGrid_PreviewMouseLeftButtonUp"
-                PreviewMouseDoubleClick="dataGrid_PreviewMouseDoubleClick" 
-                SelectionChanged="dataGrid_SelectionChanged" >
+				x:FieldModifier="private"   
+                SelectionChanged="dataGrid_SelectionChanged" 
+                MouseDoubleClick="dataGrid_MouseDoubleClick" >
 
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
@@ -108,8 +106,7 @@
                                 <TextBox VerticalAlignment="Center" Padding="2,0,5,0" Text="{Binding Name, Mode=TwoWay}" BorderBrush="{x:Null}" 
                                          Background="White" 
                                          TextChanged="TextBoxTextChanged" 
-                                         PreviewKeyDown="TextBox_PreviewKeyDown">
-                                </TextBox>
+                                         KeyDown="TextBox_KeyDown"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>

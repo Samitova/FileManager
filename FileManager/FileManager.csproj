@@ -59,7 +59,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\FileSystemProvider.cs" />
-    <Compile Include="ViewModel\IAction.cs" />
     <Compile Include="ViewModel\MyDirInfo.cs" />
     <Compile Include="ViewModel\MyDriveInfo.cs" />
     <Compile Include="ViewModel\MyFileInfo.cs" />

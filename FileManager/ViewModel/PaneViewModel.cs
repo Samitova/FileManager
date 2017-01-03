@@ -9,17 +9,18 @@ using System.Windows;
 
 namespace FileManager.ViewModel
 {
-    internal class PaneViewModel : ViewModelBase
+     class PaneViewModel : ViewModelBase
     {
         private SystemFileItem _currentDrive;
         private IList<SystemFileItem> _drives;
         private SystemFileItem _currentItem;
         private IList<SystemFileItem> _visibleItems;
         private IList<SystemFileItem> _selectedItems;
-
+       
         public string DirectoryToCopy { get; set; }
 
         public SystemFileItem SelectedItem { get; set; }
+
         public IList<SystemFileItem> SelectedItems
         {
             get
@@ -35,17 +36,6 @@ namespace FileManager.ViewModel
                 _selectedItems = value;
                 OnPropertyChanged("SelectedItems");
             }
-        }
-
-        /// <summary>
-        /// ctor
-        /// </summary>
-        public PaneViewModel()
-        {
-            RefreshDrivers();
-            CurrentDrive = new MyDriveInfo(FileSystemProvider.GetDrive(@"c:\"));
-            CurrentItem = CurrentDrive;
-
         }
 
         public SystemFileItem CurrentItem
@@ -109,9 +99,20 @@ namespace FileManager.ViewModel
         }
 
         /// <summary>
+        /// ctor
+        /// </summary>
+        public PaneViewModel()
+        {
+            RefreshDrivers();
+            CurrentDrive = new MyDriveInfo(FileSystemProvider.GetDrive(@"c:\"));
+            CurrentItem = CurrentDrive;
+
+        }
+      
+        /// <summary>
         /// Get the children of current directory and stores them in the CurrentItems Observable collection
         /// </summary>
-        protected void RefreshDrivers()
+        public void RefreshDrivers()
         {
             LogicalDrives = FileSystemProvider.GetLocalDrives().Select(dir => new MyDriveInfo(dir)).ToList<SystemFileItem>();
         }
@@ -119,7 +120,7 @@ namespace FileManager.ViewModel
         /// <summary>
         /// Get the children of current directory and stores them in the VisibleItems observable collection
         /// </summary>
-        protected void RefreshVisibleItems()
+        public void RefreshVisibleItems()
         {
             IList<SystemFileItem> childrenDirList = new List<SystemFileItem>();
 
@@ -157,68 +158,90 @@ namespace FileManager.ViewModel
             }
         }
 
-        public void Move(IList<SystemFileItem> selectedItems)
+        /// <summary>
+        /// Move selected items
+        /// </summary>
+        /// <param name="selectedItems">selectedItems</param>
+        public void Move()
         {
             string[] messageParams = new string[] { "Do you want to move ", "to", DirectoryToCopy, "?" };
-            MessageBoxResult resultDeleteConformation = MessageBox.Show(BuildMassege(selectedItems, messageParams), "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            MessageBoxResult resultDeleteConformation = MessageBox.Show(BuildMassege(SelectedItems, messageParams), "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (resultDeleteConformation == MessageBoxResult.Yes)
             {
-                foreach (SystemFileItem item in selectedItems)
+                foreach (SystemFileItem item in SelectedItems)
                 {
                     item.Move(DirectoryToCopy);
                 }
-            }
-            RefreshVisibleItems();
+            }            
         }
 
         /// <summary>
         /// Delete selected items
         /// </summary>
         /// <param name="selectedItems">selectedItems</param>
-        public void Delete(IList<SystemFileItem> selectedItems)
+        public void Delete()
         {
             string[] messageParams = new string[] { "Do you want to delete ", "?" };
 
-            MessageBoxResult resultDeleteConformation = MessageBox.Show(BuildMassege(selectedItems, messageParams), "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            MessageBoxResult resultDeleteConformation = MessageBox.Show(BuildMassege(SelectedItems, messageParams), "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (resultDeleteConformation == MessageBoxResult.Yes)
             {
-                foreach (SystemFileItem item in selectedItems)
+                foreach (SystemFileItem item in SelectedItems)
                 {
                     item.Delete();
                 }
-            }
-            RefreshVisibleItems();
+            }            
         }
 
-        public void Copy(IList<SystemFileItem> selectedItems)
+        /// <summary>
+        /// Copy selected items
+        /// </summary>
+        /// <param name="selectedItems">selectedItems</param>
+        public void Copy()
         {
             string[] messageParams = new string[] { "Do you want to copy ", "to", DirectoryToCopy, "?" };
 
-            MessageBoxResult resultDeleteConformation = MessageBox.Show(BuildMassege(selectedItems, messageParams), "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            MessageBoxResult resultDeleteConformation = MessageBox.Show(BuildMassege(SelectedItems, messageParams), "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (resultDeleteConformation == MessageBoxResult.Yes)
             {
-                foreach (SystemFileItem item in selectedItems)
+                foreach (SystemFileItem item in SelectedItems)
                 {
                     item.Copy(DirectoryToCopy);
                 }
-            }
-            RefreshVisibleItems();
+            }           
         }
 
+        /// <summary>
+        /// Get details about system item
+        /// </summary>
+        public void GetDetails()
+        {
+            SelectedItem.GetDetails();
+        }
+
+        /// <summary>
+        /// Create directory
+        /// </summary>
+        /// <param name="dirName">directory name</param>
         public void Create(string dirName)
         {
-            CurrentItem.Create(dirName);
-            RefreshVisibleItems();
+            if (CurrentItem != null)
+            {
+                CurrentItem.Create(dirName);
+            }           
         }
 
+        /// <summary>
+        /// Rename selected system item
+        /// </summary>
+        /// <param name="newName"></param>
         public void Rename(string newName)
         {
             if (SelectedItem != null)
             {
                 SelectedItem.Rename(newName);
-            }
-            RefreshVisibleItems();
+            }           
         }
 
         /// <summary>

@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace FileManager.ViewModel
 {
-    abstract class SystemFileItem : DependencyObject, IAction
+    abstract class SystemFileItem
     {
         public string Name { get; set; }
         public string Path { get; set; }

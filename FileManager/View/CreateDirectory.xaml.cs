@@ -36,7 +36,7 @@ namespace FileManager.View
                                    select change)
             {
                 textBox.Text = textBox.Text.Remove(change.Offset, change.AddedLength);
-            }                
+            }
         }
 
         private void okButton_Click(object sender, RoutedEventArgs e)

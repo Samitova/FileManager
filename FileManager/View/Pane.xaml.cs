@@ -23,54 +23,65 @@ namespace FileManager.View
     /// Логика взаимодействия для Pane.xaml
     /// </summary>
     public partial class Pane : UserControl
-    {
-        internal PaneViewModel _pane;
-        
+    {        
+        internal PaneViewModel PaneVM { get; set; }
+        internal string DirectoryToCopy {          
+            set
+            {
+                PaneVM.DirectoryToCopy = value;
+            }
+        }
+
+        public event EventHandler SetFocusedPane;
+
+        public void OnSetFocusedDataGrid(EventArgs e)
+        {
+            var handler = SetFocusedPane;
+            if (handler != null) handler(this, e);
+        }
+
+        /// <summary>
+        /// ctor
+        /// </summary>
         public Pane()
-        {
-            _pane = new PaneViewModel();           
-            DataContext = _pane;
-            InitializeComponent();            
+        {           
+            InitializeComponent();
+            this.Loaded += new RoutedEventHandler(ViewLoaded);
         }
 
-        private void dataGrid_KeyDown(object sender, KeyEventArgs e)
+        private void ViewLoaded(object sender, RoutedEventArgs e)
         {
-            if (e.Key == Key.F5)
-            {
-                _pane.Copy(dataGrid.SelectedItems.Cast<SystemFileItem>().ToList());
-            }
-            if (e.Key == Key.F6)
-            {
-                _pane.Move(dataGrid.SelectedItems.Cast<SystemFileItem>().ToList());
-            }
-            if (e.Key == Key.F7)
-            {
-                CreateDirectory _createDirWindow = new CreateDirectory();
-                _createDirWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                _createDirWindow.ShowDialog();
-                if (_createDirWindow.DirName != null)
-                {
-                    _pane.Create(_createDirWindow.DirName);
-                }                
-            }
-            if (e.Key == Key.F8)
-            {
-                _pane.Delete(dataGrid.SelectedItems.Cast<SystemFileItem>().ToList());               
-            }
-            if (e.Key == Key.F9)
-            {
-                ((SystemFileItem)dataGrid.SelectedItem).GetDetails();
-            }
+            PaneVM = this.DataContext as PaneViewModel;            
         }
-      
-        private void dataGrid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        
+        public string GetCurrentPath()
         {
-            _pane.SelectedItem = (SystemFileItem)dataGrid.CurrentItem;
+            return PaneVM.CurrentItem.Path;
+        } 
+
+        private void dataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            OnSetFocusedDataGrid(e);
+
+            if (dataGrid.SelectedItems != null && PaneVM != null)
+            {
+                PaneVM.SelectedItem = dataGrid.SelectedItem as SystemFileItem;
+                PaneVM.SelectedItems = dataGrid.SelectedItems.Cast<SystemFileItem>().ToList();
+            }           
         }
 
-        public void SetCopyDir(string path)
+        /// <summary>
+        /// Rename file on Enter down
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            _pane.DirectoryToCopy = path;
+            if (e.Key == Key.Enter)
+            {
+                string newFileName = ((TextBox)sender).Text;
+                PaneVM.Rename(newFileName);
+            }
         }
 
         /// <summary>
@@ -88,30 +99,17 @@ namespace FileManager.View
                                    select change)
             {
                 textBox.Text = textBox.Text.Remove(change.Offset, change.AddedLength);
-            }            
-        }
-
-        private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            
-            if (e.Key == Key.Enter)
-            {               
-                string newFileName = ((TextBox)sender).Text;                
-                _pane.Rename(newFileName);
             }
         }
 
-        private void dataGrid_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        /// <summary>
+        /// Execute item
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (dataGrid.CurrentItem != null)
-            {
-                _pane.OpenCurrentItem();
-            }           
-        }
-
-        private void dataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            _pane.SelectedItems = dataGrid.SelectedItems.Cast<SystemFileItem>().ToList();
+            PaneVM.OpenCurrentItem();
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace FileManager.ViewModel
 {
-    class MyDirInfo : SystemFileItem, IAction
+    class MyDirInfo : SystemFileItem
     {
         public MyDirInfo(DirectoryInfo dir)
         {
@@ -22,6 +22,10 @@ namespace FileManager.ViewModel
             Icon = @"Images/folder.png";
         }
 
+        /// <summary>
+        /// Copy directory
+        /// </summary>
+        /// <param name="targetDir"></param>
         public override void Copy(string targetDir)
         {
             string pathToCopy = System.IO.Path.Combine(targetDir, Name);
@@ -56,7 +60,7 @@ namespace FileManager.ViewModel
         }
 
         /// <summary>
-        /// Copy directory with subdirectories
+        /// Copy logic for directory with subdirectories
         /// </summary>
         /// <param name="sourceDirName"></param>
         /// <param name="destDirName"></param>
@@ -111,6 +115,46 @@ namespace FileManager.ViewModel
             return (dir.GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length)/ 1024).ToString() + " KB";
         }
 
+        /// <summary>
+        /// Create directory
+        /// </summary>
+        /// <param name="dirName">name</param>
+        public override void Create(string dirName)
+        {
+            string pathToCreate = System.IO.Path.Combine(Path, dirName);
+            try
+            {
+                if (Directory.Exists(pathToCreate))
+                {
+                    MessageBoxResult resultConformation = MessageBox.Show("Folder with such name is allready existed. Do you want to replace it?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (resultConformation == MessageBoxResult.Yes)
+                    {
+                        Directory.Delete(pathToCreate, true);
+                        Directory.CreateDirectory(pathToCreate);
+                    }
+                }
+                else
+                {
+                    Directory.CreateDirectory(pathToCreate);
+                }
+            }
+            catch (IOException ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Delete directory
+        /// </summary>
         public override void Delete()
         {
             try
@@ -141,6 +185,10 @@ namespace FileManager.ViewModel
             RenameDir(pathToCopy);
         }
 
+        /// <summary>
+        /// Rename directory
+        /// </summary>
+        /// <param name="newName"></param>
         public override void Rename(string newName)
         {
             string newDirName = System.IO.Path.Combine(Parent, newName);
@@ -183,38 +231,6 @@ namespace FileManager.ViewModel
                 MessageBox.Show(ex.Message.ToString());
             }
         }
-
-        public override void Create(string dirName)
-        {
-            string pathToCreate = System.IO.Path.Combine(Path, dirName);
-            try
-            {
-                if (Directory.Exists(pathToCreate))
-                {
-                    MessageBoxResult resultConformation = MessageBox.Show("Folder with such name is allready existed. Do you want to replace it?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (resultConformation == MessageBoxResult.Yes)
-                    {
-                        Directory.Delete(pathToCreate, true);
-                        Directory.CreateDirectory(pathToCreate);
-                    }
-                }
-                else
-                {
-                    Directory.CreateDirectory(pathToCreate);
-                }
-            }
-            catch (IOException ex)
-            {
-                MessageBox.Show(ex.Message.ToString());
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                MessageBox.Show(ex.Message.ToString());
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message.ToString());
-            }
-        }
+     
     }
 }

@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace FileManager.ViewModel
 {
-    class MyFileInfo : SystemFileItem, IAction
+    class MyFileInfo : SystemFileItem
     {        
         public bool IsReadOnly
         {
