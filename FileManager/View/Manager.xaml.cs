@@ -1,8 +1,10 @@
 ﻿using FileManager.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,23 +17,25 @@ using System.Windows.Shapes;
 
 namespace FileManager.View
 {
+   
     /// <summary>
     /// Логика взаимодействия для Manager.xaml
     /// </summary>
     public partial class Manager : Window
     {
-        private PaneViewModel _leftPaneViewModel;
-        private PaneViewModel _rightPaneViewModel;
+        
+        private ManagerVievModel _managerVM;      
         private Pane FocusedPane;     
 
         public Manager()
         {
-            _leftPaneViewModel = new PaneViewModel();
-            _rightPaneViewModel = new PaneViewModel();
             InitializeComponent();
-            _leftPane.DataContext = _leftPaneViewModel;
-            _rightPane.DataContext = _rightPaneViewModel;
-        }
+
+            _managerVM = new ManagerVievModel();
+            DataContext = _managerVM;          
+            _leftPane.DataContext = _managerVM.LeftPaneViewModel;
+            _rightPane.DataContext = _managerVM.RightPaneViewModel;         
+        }      
 
         private void LeftPane_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -47,7 +51,7 @@ namespace FileManager.View
         {
             if (e.Key == Key.F5)
             {
-                FocusedPane.PaneVM.Copy();
+                //FocusedPane.PaneVM.Copy();
                 RefreshView();
             }
             if (e.Key == Key.F6)
@@ -99,7 +103,7 @@ namespace FileManager.View
 
         private void copyButton_Click(object sender, RoutedEventArgs e)
         {
-            FocusedPane.PaneVM.Copy();
+            //FocusedPane.PaneVM.Copy();
             RefreshView();
         }
 
@@ -127,12 +131,16 @@ namespace FileManager.View
 
         private void detailsButton_Click(object sender, RoutedEventArgs e)
         {
-            FocusedPane.PaneVM.GetDetails();
+            //FocusedPane.PaneVM.GetDetails();
+            
+           // worker.RunWorkerAsync();
+            
         }
 
         private void SetCurrentFocusedPane(object sender, EventArgs e)
         {
-            FocusedPane = (Pane)sender;            
+            FocusedPane = (Pane)sender;
+            _managerVM.CurrentPaneViewModel = FocusedPane.PaneVM;            
         }
     }
 }

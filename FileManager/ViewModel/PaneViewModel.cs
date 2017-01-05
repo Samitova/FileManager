@@ -1,16 +1,23 @@
 ﻿using FileManager.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace FileManager.ViewModel
 {
-     class PaneViewModel : ViewModelBase
+    
+    class PaneViewModel : ViewModelBase
     {
+        BackgroundWorker worker;
+
         private SystemFileItem _currentDrive;
         private IList<SystemFileItem> _drives;
         private SystemFileItem _currentItem;
@@ -106,9 +113,30 @@ namespace FileManager.ViewModel
             RefreshDrivers();
             CurrentDrive = new MyDriveInfo(FileSystemProvider.GetDrive(@"c:\"));
             CurrentItem = CurrentDrive;
+            worker = new BackgroundWorker();
+            worker.DoWork += new DoWorkEventHandler(worker_DoWork);
 
         }
-      
+
+        void worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Copy2();
+        }
+
+        private void Copy2()
+        {
+           
+
+            for (int i = 0; i < 100; i++)
+            {
+                Thread.Sleep(200);
+                
+            }
+
+        }
+
+
+
         /// <summary>
         /// Get the children of current directory and stores them in the CurrentItems Observable collection
         /// </summary>
@@ -122,17 +150,7 @@ namespace FileManager.ViewModel
         /// </summary>
         public void RefreshVisibleItems()
         {
-            IList<SystemFileItem> childrenDirList = new List<SystemFileItem>();
-
-            if (CurrentItem is MyDirInfo)
-            {
-                CurrentItem.Name = "[...]";
-                childrenDirList.Add(CurrentItem);
-            }
-
-            childrenDirList = childrenDirList.Concat(FileSystemProvider.GetChildrenDirectories(CurrentItem.Path).Select(dir => new MyDirInfo(dir)).ToList<SystemFileItem>()).ToList();
-            VisibleItems = childrenDirList.Concat(FileSystemProvider.GetChildrenFiles(CurrentItem.Path).Select(dir => new MyFileInfo(dir)).ToList<SystemFileItem>()).ToList();
-
+            VisibleItems = CurrentItem.GetChildren();
         }
 
         /// <summary>
@@ -198,16 +216,18 @@ namespace FileManager.ViewModel
         /// Copy selected items
         /// </summary>
         /// <param name="selectedItems">selectedItems</param>
-        public void Copy()
+        public void Copy(Action<int> progress)
         {
             string[] messageParams = new string[] { "Do you want to copy ", "to", DirectoryToCopy, "?" };
 
             MessageBoxResult resultDeleteConformation = MessageBox.Show(BuildMassege(SelectedItems, messageParams), "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (resultDeleteConformation == MessageBoxResult.Yes)
             {
+                int count = 0;
                 foreach (SystemFileItem item in SelectedItems)
                 {
                     item.Copy(DirectoryToCopy);
+                    progress(++count);
                 }
             }           
         }

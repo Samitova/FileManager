@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Windows;
+using FileManager.Model;
 
 namespace FileManager.ViewModel
 {
@@ -52,6 +53,45 @@ namespace FileManager.ViewModel
             {
                 MessageBox.Show(ex.Message.ToString());
             }
+        }
+
+        public override void Copy(string targetDir)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override void Delete()
+        {
+            throw new NotSupportedException();
+        }
+
+        public override void Execute()
+        {
+            throw new NotSupportedException();
+        }
+
+        public override void GetDetails()
+        {
+            throw new NotSupportedException();
+        }
+
+        public override void Move(string targetDir)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override void Rename(string newName)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override List<SystemFileItem> GetChildren()
+        {
+            IList<SystemFileItem> childrenDirList = new List<SystemFileItem>();
+
+            childrenDirList = childrenDirList.Concat(FileSystemProvider.GetChildrenDirectories(Path).Select(dir => new MyDirInfo(dir)).ToList<SystemFileItem>()).ToList();
+
+            return childrenDirList.Concat(FileSystemProvider.GetChildrenFiles(Path).Select(dir => new MyFileInfo(dir)).ToList<SystemFileItem>()).ToList();
         }
     }
 }

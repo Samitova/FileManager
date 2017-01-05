@@ -51,7 +51,7 @@ namespace FileManager.View
 
         private void ViewLoaded(object sender, RoutedEventArgs e)
         {
-            PaneVM = this.DataContext as PaneViewModel;            
+           PaneVM = this.DataContext as PaneViewModel;            
         }
         
         public string GetCurrentPath()

@@ -16,28 +16,24 @@ namespace FileManager.ViewModel
         public string Ext { get; set; }
         public string CreationDate { get; set; }
         public string LastAcssesDate { get; set; }
+        public string LastWriteDate { get; set; }
         public string Icon { get; set; }
+
+        public abstract void Create(string dirName);
+
+        public abstract void Delete();
+
+        public abstract void Move(string targetDir);
+
+        public abstract void Copy(string targetDir);
+
+        public abstract void Rename(string newName);
+
+        public abstract void GetDetails();
+
+        public abstract void Execute();
+
+        public abstract List<SystemFileItem> GetChildren();
        
-
-        public virtual void Delete()
-        { }
-
-        public virtual void Move(string targetDir)
-        { }
-
-        public virtual void Copy(string targetDir)
-        { }
-
-        public virtual void Rename(string newName)
-        { }
-
-        public virtual void GetDetails()
-        { }
-
-        public virtual void Execute()
-        { }
-
-        public virtual void Create(string dirName)
-        { }
     }
 }

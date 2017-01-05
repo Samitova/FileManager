@@ -35,8 +35,9 @@ namespace FileManager.ViewModel
             Path = file.FullName;
             Size = (file.Length / 1024).ToString() + " KB";
             Ext = file.Extension;
-            LastAcssesDate = file.LastAccessTime.ToString("dd.MM.yy HH:mm");
             CreationDate = file.CreationTime.ToString("dd.MM.yy HH:mm");
+            LastAcssesDate = file.LastAccessTime.ToString("dd.MM.yy HH:mm");          
+            LastWriteDate = file.LastWriteTime.ToString("dd.MM.yy HH:mm");
             Icon = "Images/file.png";
         }
 
@@ -181,9 +182,10 @@ namespace FileManager.ViewModel
 
             builder.AppendLine(string.Format("{0, -25} {1, -15}", "File Name:", Name+Ext));
             builder.AppendLine(string.Format("{0, -26} {1, -15}", "Location:", Parent));
-            builder.AppendLine(string.Format("{0, -30} {1, -15}", "Size:", Size));
+            builder.AppendLine(string.Format("{0, -31} {1, -15}", "Size:", Size));
             builder.AppendLine(string.Format("{0, -22} {1, -15}", "Creation Date:", CreationDate));
             builder.AppendLine(string.Format("{0, -20} {1, -15}", "Last Acsses Date:", LastAcssesDate));
+            builder.AppendLine(string.Format("{0, -22} {1, -15}", "Last Write Date:", LastWriteDate));
             builder.AppendLine(string.Format("{0, -24} {1, -15}", "IsReadOnly:", IsReadOnly));
             builder.AppendLine(string.Format("{0, -26} {1, -15}", "IsHidden:", IsHidden));
 
@@ -193,6 +195,16 @@ namespace FileManager.ViewModel
         public override void Execute()
         {
             System.Diagnostics.Process.Start(this.Path);
+        }
+
+        public override void Create(string dirName)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override List<SystemFileItem> GetChildren()
+        {
+            throw new NotSupportedException();
         }
     }
 }

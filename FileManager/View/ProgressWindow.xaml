@@ -1,0 +1,16 @@
+﻿<Window x:Name="Progress" x:Class="FileManager.View.ProgressWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileManager.View"
+        mc:Ignorable="d"
+        Title="Progressing..." Height="200" Width="500">
+    <Grid>
+        <ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="38" Margin="30,57,0,0" VerticalAlignment="Top" Width="429"/>
+        <Button x:Name="cancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="365,119,0,0" VerticalAlignment="Top" Width="94" Height="26" FontFamily="Times New Roman" FontSize="16"/>
+        <TextBlock x:Name="txtDialogMessage" HorizontalAlignment="Left" Margin="30,20,0,0" TextWrapping="Wrap" Text="Work is in progress. Please stand by..." VerticalAlignment="Top" Height="27" Width="429" FontFamily="Times New Roman" FontSize="21.333"/>
+        <Label x:Name="lblStatus" Content="Progress" HorizontalAlignment="Left" Margin="40,119,0,0" VerticalAlignment="Top" Width="251"/>
+
+    </Grid>
+</Window>

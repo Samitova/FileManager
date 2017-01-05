@@ -59,10 +59,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\FileSystemProvider.cs" />
+    <Compile Include="ViewModel\Commands\AsyncRelayCommand.cs" />
+    <Compile Include="ViewModel\Commands\RelayCommand.cs" />
+    <Compile Include="ViewModel\ManagerVievModel.cs" />
     <Compile Include="ViewModel\MyDirInfo.cs" />
     <Compile Include="ViewModel\MyDriveInfo.cs" />
     <Compile Include="ViewModel\MyFileInfo.cs" />
     <Compile Include="ViewModel\PaneViewModel.cs" />
+    <Compile Include="ViewModel\ProgressModel.cs" />
     <Compile Include="ViewModel\SystemFileItem.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="View\CreateDirectory.xaml.cs">
@@ -78,6 +82,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="View\ProgressWindow.xaml.cs">
+      <DependentUpon>ProgressWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -91,6 +98,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Pane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ProgressWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

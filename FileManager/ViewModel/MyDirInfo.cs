@@ -5,11 +5,61 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Windows;
+using FileManager.Model;
+using System.Security;
 
 namespace FileManager.ViewModel
 {
     class MyDirInfo : SystemFileItem
     {
+        private int SubFoldersCount
+        {
+            get
+            {
+                try
+                {
+                    return (new DirectoryInfo(Path).GetDirectories()).Count();
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    MessageBox.Show(e.Message.ToString());
+                }
+                return -1;
+            }
+        }
+
+        private int SubFilesCount
+        {
+            get
+            {
+                try
+                {
+                    return (new DirectoryInfo(Path).GetFiles("*", SearchOption.TopDirectoryOnly)).Count();
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    MessageBox.Show(e.Message.ToString());
+                }
+                return -1;
+            }
+        }
+
+        private string DirTotalSize
+        {
+            get
+            {
+                try
+                {
+                    return (new DirectoryInfo(Path).GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length) / 1024).ToString() + " KB";
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    MessageBox.Show(e.Message.ToString());
+                }
+                return string.Empty;
+            }
+        }
+
         public MyDirInfo(DirectoryInfo dir)
         {
             Name = dir.Name;
@@ -17,6 +67,7 @@ namespace FileManager.ViewModel
             Path = dir.FullName;
             Size = "<dir>";
             Ext = "";
+            LastWriteDate = dir.LastWriteTime.ToString("dd.MM.yy HH:mm");
             CreationDate = dir.CreationTime.ToString("dd.MM.yy HH:mm");
             LastAcssesDate = dir.LastAccessTime.ToString("dd.MM.yy HH:mm");
             Icon = @"Images/folder.png";
@@ -95,24 +146,17 @@ namespace FileManager.ViewModel
         public override void GetDetails()
         {
             StringBuilder builder = new StringBuilder();
-           
-            builder.AppendLine(string.Format("{0, -20} {1, -15}", "Directory Name:", Name));
-            builder.AppendLine(string.Format("{0, -26} {1, -15}", "Location:", Parent)); 
-            builder.AppendLine(string.Format("{0, -30} {1, -15}", "Size:", CalculateDirSize()));
-            builder.AppendLine(string.Format("{0, -22} {1, -15}", "Creation Date:", CreationDate)); 
-            builder.AppendLine(string.Format("{0, -20} {1, -15}", "Last Acsses Date:", LastAcssesDate));            
+
+            builder.AppendLine(string.Format("{0, -30} {1, -15}", "Directory Name:", Name));
+            builder.AppendLine(string.Format("{0, -36} {1, -15}", "Location:", Parent));
+            builder.AppendLine(string.Format("{0, -40} {1, -15}", "Size:", DirTotalSize));
+            builder.AppendLine(string.Format("{0, -32} {1, -15}", "Creation Date:", CreationDate));
+            builder.AppendLine(string.Format("{0, -30} {1, -15}", "Last Acsses Date:", LastAcssesDate));
+            builder.AppendLine(string.Format("{0, -32} {1, -15}", "Last Write Date:", LastWriteDate));
+            builder.AppendLine(string.Format("{0, -28} {1, -15}", "Number of Folders:", SubFoldersCount));
+            builder.AppendLine(string.Format("{0, -31} {1, -15}", "Number of Files:", SubFoldersCount));
 
             MessageBox.Show(builder.ToString(), "Directory details");
-        }
-
-        /// <summary>
-        /// Calculate size of all files in directory
-        /// </summary>
-        /// <returns></returns>
-        private string CalculateDirSize()
-        {
-            DirectoryInfo dir = new DirectoryInfo(Path);
-            return (dir.GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length)/ 1024).ToString() + " KB";
         }
 
         /// <summary>
@@ -231,6 +275,20 @@ namespace FileManager.ViewModel
                 MessageBox.Show(ex.Message.ToString());
             }
         }
-     
+
+        public override void Execute()
+        { }
+
+        public override List<SystemFileItem> GetChildren()
+        {
+            IList<SystemFileItem> childrenDirList = new List<SystemFileItem>();
+
+            Name = "[...]";
+            childrenDirList.Add(this);
+
+            childrenDirList = childrenDirList.Concat(FileSystemProvider.GetChildrenDirectories(Path).Select(dir => new MyDirInfo(dir)).ToList<SystemFileItem>()).ToList();
+
+            return childrenDirList.Concat(FileSystemProvider.GetChildrenFiles(Path).Select(dir => new MyFileInfo(dir)).ToList<SystemFileItem>()).ToList();
+        }
     }
 }
