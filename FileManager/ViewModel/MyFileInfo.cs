@@ -27,6 +27,13 @@ namespace FileManager.ViewModel
                 return (attributes & FileAttributes.Hidden) == FileAttributes.Hidden;
             }
         }
+        public override int TotalSubFilesCount
+        {
+            get
+            {
+                return 1;
+            }
+        }
 
         public MyFileInfo(FileInfo file)
         {
@@ -206,5 +213,7 @@ namespace FileManager.ViewModel
         {
             throw new NotSupportedException();
         }
+
+       
     }
 }

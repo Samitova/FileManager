@@ -44,6 +44,22 @@ namespace FileManager.ViewModel
             }
         }
 
+        public override int TotalSubFilesCount
+        {
+            get
+            {
+                try
+                {
+                    return (new DirectoryInfo(Path).GetFiles("*", SearchOption.AllDirectories)).Count();
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    MessageBox.Show(e.Message.ToString());
+                }
+                return -1;
+            }
+        }
+
         private string DirTotalSize
         {
             get
@@ -290,5 +306,6 @@ namespace FileManager.ViewModel
 
             return childrenDirList.Concat(FileSystemProvider.GetChildrenFiles(Path).Select(dir => new MyFileInfo(dir)).ToList<SystemFileItem>()).ToList();
         }
+
     }
 }

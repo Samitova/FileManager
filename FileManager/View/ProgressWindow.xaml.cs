@@ -20,39 +20,12 @@ namespace FileManager.View
 {
     public partial class ProgressWindow : Window
     {
-
-
         public ProgressWindow()
         {
             InitializeComponent();
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //    private readonly BackgroundWorker _worker;
+             //    private readonly BackgroundWorker _worker;
 
         //    /// <summary>
         //    /// The timer to be used for automatic progress bar updated.

@@ -1,4 +1,5 @@
 ﻿using FileManager.Model;
+using FileManager.ViewModel.Commands;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,7 +17,6 @@ namespace FileManager.ViewModel
     
     class PaneViewModel : ViewModelBase
     {
-        BackgroundWorker worker;
 
         private SystemFileItem _currentDrive;
         private IList<SystemFileItem> _drives;
@@ -112,29 +112,9 @@ namespace FileManager.ViewModel
         {
             RefreshDrivers();
             CurrentDrive = new MyDriveInfo(FileSystemProvider.GetDrive(@"c:\"));
-            CurrentItem = CurrentDrive;
-            worker = new BackgroundWorker();
-            worker.DoWork += new DoWorkEventHandler(worker_DoWork);
+            CurrentItem = CurrentDrive;          
 
         }
-
-        void worker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            Copy2();
-        }
-
-        private void Copy2()
-        {
-           
-
-            for (int i = 0; i < 100; i++)
-            {
-                Thread.Sleep(200);
-                
-            }
-
-        }
-
 
 
         /// <summary>
@@ -180,15 +160,21 @@ namespace FileManager.ViewModel
         /// Move selected items
         /// </summary>
         /// <param name="selectedItems">selectedItems</param>
-        public void Move()
+        public void Move(AsynchronousCommand command)
         {
-            string[] messageParams = new string[] { "Do you want to move ", "to", DirectoryToCopy, "?" };
-            MessageBoxResult resultDeleteConformation = MessageBox.Show(BuildMassege(SelectedItems, messageParams), "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            int filesCount = GetFilesCount(SelectedItems);
+            string message = $"Do you want to move {filesCount} files to {DirectoryToCopy}?";
+           
+            MessageBoxResult resultDeleteConformation = MessageBox.Show(message, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (resultDeleteConformation == MessageBoxResult.Yes)
             {
                 foreach (SystemFileItem item in SelectedItems)
                 {
-                    item.Move(DirectoryToCopy);
+                    if (command.CancelIfRequested())
+                        return;
+                    command.ReportProgress(() => item.Move(DirectoryToCopy));
+                    command.ProgressStatus += 100 / filesCount;
+                    System.Threading.Thread.Sleep(2000);
                 }
             }            
         }
@@ -197,17 +183,22 @@ namespace FileManager.ViewModel
         /// Delete selected items
         /// </summary>
         /// <param name="selectedItems">selectedItems</param>
-        public void Delete()
+        public void Delete(AsynchronousCommand command)
         {
-            string[] messageParams = new string[] { "Do you want to delete ", "?" };
+            int filesCount = GetFilesCount(SelectedItems);
+            string message = $"Do you want to delete {filesCount} files?";
 
-            MessageBoxResult resultDeleteConformation = MessageBox.Show(BuildMassege(SelectedItems, messageParams), "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            MessageBoxResult resultDeleteConformation = MessageBox.Show(message, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (resultDeleteConformation == MessageBoxResult.Yes)
             {
                 foreach (SystemFileItem item in SelectedItems)
                 {
-                    item.Delete();
+                    if (command.CancelIfRequested())
+                        return;
+                    command.ReportProgress(() => item.Delete());
+                    command.ProgressStatus += 100 / filesCount;
+                    System.Threading.Thread.Sleep(2000);
                 }
             }            
         }
@@ -216,20 +207,41 @@ namespace FileManager.ViewModel
         /// Copy selected items
         /// </summary>
         /// <param name="selectedItems">selectedItems</param>
-        public void Copy(Action<int> progress)
+        public void Copy(AsynchronousCommand command)
         {
-            string[] messageParams = new string[] { "Do you want to copy ", "to", DirectoryToCopy, "?" };
+            int filesCount = GetFilesCount(SelectedItems);
+            string message = $"Do you want to copy {filesCount} files to {DirectoryToCopy}?";
 
-            MessageBoxResult resultDeleteConformation = MessageBox.Show(BuildMassege(SelectedItems, messageParams), "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            MessageBoxResult resultDeleteConformation = MessageBox.Show(message, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (resultDeleteConformation == MessageBoxResult.Yes)
             {
-                int count = 0;
+               
                 foreach (SystemFileItem item in SelectedItems)
                 {
-                    item.Copy(DirectoryToCopy);
-                    progress(++count);
+                    if (command.CancelIfRequested())
+                        return;
+                    command.ReportProgress(() => item.Copy(DirectoryToCopy));
+                    command.ProgressStatus += 100/filesCount;
+                    System.Threading.Thread.Sleep(2000);
                 }
-            }           
+            }
+        }
+
+        /// <summary>
+        /// Get totla count of files
+        /// </summary>
+        /// <param name="selectedItems">selected files and directories</param>
+        /// <returns></returns>
+        private int GetFilesCount(IList<SystemFileItem> selectedItems)
+        {
+            int filesCount = 0;
+
+            foreach (SystemFileItem item in selectedItems)
+            {
+                filesCount+=item.TotalSubFilesCount;
+            }
+
+            return filesCount;
         }
 
         /// <summary>
@@ -263,29 +275,6 @@ namespace FileManager.ViewModel
                 SelectedItem.Rename(newName);
             }           
         }
-
-        /// <summary>
-        /// Build massege for user actions
-        /// </summary>
-        /// <param name="message">massege</param>
-        /// <param name="selectedItems">selectedItems</param>
-        /// <returns></returns>
-        private string BuildMassege(IList<SystemFileItem> selectedItems, params string[] message)
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine(message[0]);
-            foreach (var item in selectedItems)
-            {
-                builder.AppendLine(item.Name + item.Ext);
-            }
-            for (int i = 1; i < message.Length; i++)
-            {
-                builder.Append(message[i]);
-                builder.Append(" ");
-            }
-
-            return builder.ToString();
-        }
-
+      
     }
 }

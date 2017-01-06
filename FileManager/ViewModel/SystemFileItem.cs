@@ -19,6 +19,8 @@ namespace FileManager.ViewModel
         public string LastWriteDate { get; set; }
         public string Icon { get; set; }
 
+        public abstract int TotalSubFilesCount { get; }
+
         public abstract void Create(string dirName);
 
         public abstract void Delete();
@@ -34,6 +36,6 @@ namespace FileManager.ViewModel
         public abstract void Execute();
 
         public abstract List<SystemFileItem> GetChildren();
-       
+
     }
 }

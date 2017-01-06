@@ -32,7 +32,8 @@ namespace FileManager.View
             InitializeComponent();
 
             _managerVM = new ManagerVievModel();
-            DataContext = _managerVM;          
+            DataContext = _managerVM;
+        
             _leftPane.DataContext = _managerVM.LeftPaneViewModel;
             _rightPane.DataContext = _managerVM.RightPaneViewModel;         
         }      
@@ -56,22 +57,22 @@ namespace FileManager.View
             }
             if (e.Key == Key.F6)
             {
-                FocusedPane.PaneVM.Move();
-                RefreshView();
+                //FocusedPane.PaneVM.Move();
+                //RefreshView();
             }
             if (e.Key == Key.F7)
             {
-                string name = GetCreatingFileName();
-                if (name != null)
-                {
-                    FocusedPane.PaneVM.Create(name);
-                    RefreshView();
-                }
+                //string name = GetCreatingFileName();
+                //if (name != null)
+                //{
+                //    FocusedPane.PaneVM.Create(name);
+                //    RefreshView();
+                //}
             }
             if (e.Key == Key.F8)
             {
-                FocusedPane.PaneVM.Delete();
-                RefreshView();
+                //FocusedPane.PaneVM.Delete();
+                //RefreshView();
             }
             if (e.Key == Key.F9)
             {
@@ -88,54 +89,8 @@ namespace FileManager.View
             _leftPane.PaneVM.RefreshVisibleItems();
         }
 
-        /// <summary>
-        /// Get creating directory name
-        /// </summary>
-        /// <returns></returns>
-        private string GetCreatingFileName()
-        {
-            CreateDirectory createDirWindow = new CreateDirectory();
-            createDirWindow.Owner = this;
-            createDirWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            createDirWindow.ShowDialog();
-            return createDirWindow.DirName;
-        }
+       
 
-        private void copyButton_Click(object sender, RoutedEventArgs e)
-        {
-            //FocusedPane.PaneVM.Copy();
-            RefreshView();
-        }
-
-        private void moveButton_Click(object sender, RoutedEventArgs e)
-        {
-            FocusedPane.PaneVM.Move();
-            RefreshView();
-        }
-
-        private void createButton_Click(object sender, RoutedEventArgs e)
-        {
-            string name = GetCreatingFileName();
-            if (name != null)
-            {
-                FocusedPane.PaneVM.Create(name);
-                RefreshView();
-            }
-        }
-
-        private void deleteButton_Click(object sender, RoutedEventArgs e)
-        {
-            FocusedPane.PaneVM.Delete();
-            RefreshView();
-        }
-
-        private void detailsButton_Click(object sender, RoutedEventArgs e)
-        {
-            //FocusedPane.PaneVM.GetDetails();
-            
-           // worker.RunWorkerAsync();
-            
-        }
 
         private void SetCurrentFocusedPane(object sender, EventArgs e)
         {

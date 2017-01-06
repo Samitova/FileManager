@@ -5,13 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileManager.View"
         xmlns:vm="clr-namespace:FileManager.ViewModel"
+        xmlns:converter="clr-namespace:FileManager.ViewModel.Converters"
         mc:Ignorable="d"
         Title="Manager" Height="600" Width="900">
 
     <Window.Resources>
         <vm:ManagerVievModel x:Key="managerVievModel"/>
+        <converter:BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter"/>
     </Window.Resources>
-    
+
     <Grid x:Name="OuterGrid" PreviewKeyDown="OuterGrid_PreviewKeyDown">
         <Grid.RowDefinitions >
             <RowDefinition/>
@@ -31,11 +33,14 @@
             <!--Display the right side pane-->
             <local:Pane x:Name="_rightPane"  Grid.Column="1" Grid.Row="0"  PreviewMouseLeftButtonDown="RightPane_PreviewMouseLeftButtonDown" SetFocusedPane="SetCurrentFocusedPane" ></local:Pane>
         </Grid>
-        <Button x:Name="copyButton" Content="F5 Copy" HorizontalAlignment="Left" Margin="5,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Background="White" Height="21" Click="copyButton_Click"/>
-        <Button x:Name="moveButton" Content="F6 Move" HorizontalAlignment="Left" Margin="95,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Background="White" Height="21" Click="moveButton_Click"/>
-        <Button x:Name="createButton" Content="F7 Create" HorizontalAlignment="Left" Margin="186,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Background="White" Height="21" Click="createButton_Click"/>
-        <Button x:Name="deleteButton" Content="F8 Delete" HorizontalAlignment="Left" Margin="277,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Background="White" Height="21" Click="deleteButton_Click"/>
-        <Button x:Name="detailsButton" Content="F9 Details" HorizontalAlignment="Left" Margin="370,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Background="White" Height="21" Click="detailsButton_Click"/>
-        <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="483,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Command="{Binding CopyCommand}" />
+        <Button x:Name="copyButton" Content="F5 Copy" HorizontalAlignment="Left" Margin="5,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Background="White" Height="21" Command="{Binding StartCopyCommand}"/>
+        <Button x:Name="moveButton" Content="F6 Move" HorizontalAlignment="Left" Margin="95,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Background="White" Height="21" Command="{Binding StartMoveCommand}"/>
+        <Button x:Name="createButton" Content="F7 Create" HorizontalAlignment="Left" Margin="186,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Background="White" Height="21" Command="{Binding CreateCommand}"/>
+        <Button x:Name="deleteButton" Content="F8 Delete" HorizontalAlignment="Left" Margin="277,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Background="White" Height="21" Command="{Binding StartDeleteCommand}"/>
+        <Button x:Name="detailsButton" Content="F9 Details" HorizontalAlignment="Left" Margin="370,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Background="White" Height="21" Command="{Binding DetailsCommand}"/>
+        <StackPanel  Grid.Row="1" Orientation="Horizontal" Margin="500,0,0,0" Visibility="{Binding AsyncCommand2.IsExecuting, Converter={StaticResource booleanToVisibilityConverter}}">
+            <ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="21" Margin="10,8,0,0" Grid.Row="1" VerticalAlignment="Top" Width="217" Value="{Binding AsyncCommand2.ProgressStatus, Mode=OneWay}"/>
+            <Button x:Name="cancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="30,8,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Background="White" Height="21" Command="{Binding AsyncCommand2.CancelCommand}"/>
+        </StackPanel>
     </Grid>
 </Window>

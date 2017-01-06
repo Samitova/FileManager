@@ -5,12 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileManager.View"
         mc:Ignorable="d"
-        Title="Progressing..." Height="200" Width="500">
+        Title="Progressing..." Height="150" Width="400">
     <Grid>
-        <ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="38" Margin="30,57,0,0" VerticalAlignment="Top" Width="429"/>
-        <Button x:Name="cancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="365,119,0,0" VerticalAlignment="Top" Width="94" Height="26" FontFamily="Times New Roman" FontSize="16"/>
-        <TextBlock x:Name="txtDialogMessage" HorizontalAlignment="Left" Margin="30,20,0,0" TextWrapping="Wrap" Text="Work is in progress. Please stand by..." VerticalAlignment="Top" Height="27" Width="429" FontFamily="Times New Roman" FontSize="21.333"/>
-        <Label x:Name="lblStatus" Content="Progress" HorizontalAlignment="Left" Margin="40,119,0,0" VerticalAlignment="Top" Width="251"/>
+        <ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="23" Margin="10,37,0,0" VerticalAlignment="Top" Width="363" Value="{Binding ProgressStatus}"/>
+        <Button x:Name="cancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="301,85,0,0" VerticalAlignment="Top" Width="72" Height="21" FontFamily="Times New Roman" FontSize="12" Command="{Binding CancelCommand}"/>
+        <TextBlock x:Name="txtDialogMessage" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Work is in progress. Please stand by..." VerticalAlignment="Top" Height="22" Width="363" FontFamily="Times New Roman" FontSize="16"/>
 
     </Grid>
 </Window>

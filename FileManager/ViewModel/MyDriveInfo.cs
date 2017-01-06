@@ -22,6 +22,22 @@ namespace FileManager.ViewModel
             Path = drive.Name;
         }
 
+        public override int TotalSubFilesCount
+        {
+            get
+            {
+                try
+                {
+                    return (new DirectoryInfo(Path).GetFiles("*", SearchOption.AllDirectories)).Count();
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    MessageBox.Show(e.Message.ToString());
+                }
+                return -1;
+            }
+        }
+
         public override void Create(string dirName)
         {
             string pathToCreate = System.IO.Path.Combine(Path, dirName);
