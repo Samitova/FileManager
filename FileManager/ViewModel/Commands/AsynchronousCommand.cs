@@ -11,76 +11,81 @@ namespace FileManager.ViewModel.Commands
     /// </summary>
     public class AsynchronousCommand : Command, INotifyPropertyChanged
     {
+        protected Dispatcher _callingDispatcher;
 
-        protected Dispatcher callingDispatcher;
+        private bool _isExecuting = false;
 
-        private bool isExecuting = false;
+        private int _progressStatus = 0;
 
-        private int progressStatus = 0;
+        private bool _isCancellationRequested;
 
-        private bool isCancellationRequested;
-
-        private Command cancelCommand;
+        private Command _cancelCommand;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public event CommandEventHandler Cancelled;
 
+        /// <summary>
+        /// Flag is command executing
+        /// </summary>
         public bool IsExecuting
         {
             get
             {
-                return isExecuting;
+                return _isExecuting;
             }
             set
             {
-                if (isExecuting != value)
+                if (_isExecuting != value)
                 {
-                    isExecuting = value;
+                    _isExecuting = value;
                     NotifyPropertyChanged("IsExecuting");
                 }
             }
         }
 
+        /// <summary>
+        /// Progress status in percents
+        /// </summary>
         public int ProgressStatus
         {
             get
             {
-                return progressStatus;
+                return _progressStatus;
             }
             set
             {
-                progressStatus = value;
+                _progressStatus = value;
                 NotifyPropertyChanged("ProgressStatus");
             }
         }
 
+        /// <summary>
+        /// Flag if cancelation is requested
+        /// </summary>
         public bool IsCancellationRequested
         {
             get
             {
-                return isCancellationRequested;
+                return _isCancellationRequested;
             }
             set
             {
-                if (isCancellationRequested != value)
+                if (_isCancellationRequested != value)
                 {
-                    isCancellationRequested = value;
+                    _isCancellationRequested = value;
                     NotifyPropertyChanged("IsCancellationRequested");
                 }
             }
         }
 
+        /// <summary>
+        /// Command for cancelation
+        /// </summary>
         public Command CancelCommand
         {
-            get { return cancelCommand; }
+            get { return _cancelCommand; }
         }
-
-        /// <summary>
-        /// ctor
-        /// </summary>       
-        public AsynchronousCommand()
-        {}
 
         /// <summary>
         /// ctor
@@ -92,20 +97,32 @@ namespace FileManager.ViewModel.Commands
             Initialise();
         }
 
+        /// <summary>
+        /// ctor (action with param)
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="canExecute"></param>
         public AsynchronousCommand(Action<object> parameterizedAction, bool canExecute = true) : base(parameterizedAction, canExecute)
         {
             Initialise();
         }
 
+        /// <summary>
+        /// Init Cancel command
+        /// </summary>
         private void Initialise()
         {
-            cancelCommand = new Command(
+            _cancelCommand = new Command(
               () =>
               {
                   IsCancellationRequested = true;
               }, true);
         }
 
+        /// <summary>
+        /// Executes the command on a new thread from the thread pool
+        /// </summary>
+        /// <param name="param"></param>
         public override void DoExecute(object param)
         {
             ProgressStatus = 0;
@@ -121,7 +138,7 @@ namespace FileManager.ViewModel.Commands
 
             IsExecuting = true;
 
-            callingDispatcher = Dispatcher.CurrentDispatcher;
+            _callingDispatcher = Dispatcher.CurrentDispatcher;
                      
             ThreadPool.QueueUserWorkItem(
               (state) =>
@@ -147,7 +164,11 @@ namespace FileManager.ViewModel.Commands
                     });
               });
         }
-               
+
+        /// <summary>
+        /// Call the PropertyChanged event
+        /// </summary>
+        /// <param name="propertyName">The property name</param>
         private void NotifyPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler propertyChanged = PropertyChanged;
@@ -155,18 +176,26 @@ namespace FileManager.ViewModel.Commands
             if (propertyChanged != null)
                 propertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
-               
+
+        /// <summary>
+        /// Reports progress on the thread which invoked the command
+        /// </summary>
+        /// <param name="action"></param>
         public void ReportProgress(Action action)
         {
             if (IsExecuting)
             {
-                if (callingDispatcher.CheckAccess())
+                if (_callingDispatcher.CheckAccess())
                     action();
                 else
-                    callingDispatcher.BeginInvoke(((Action)(() => { action(); })));
+                    _callingDispatcher.BeginInvoke(((Action)(() => { action(); })));
             }
         }
-      
+
+        /// <summary>
+        ///  Cancels the command if requested
+        /// </summary>
+        /// <returns></returns>
         public bool CancelIfRequested()
         {
             if (IsCancellationRequested == false)
@@ -176,7 +205,11 @@ namespace FileManager.ViewModel.Commands
 
             return true;
         }
- 
+
+        /// <summary>
+        /// Invokes the cancelled event
+        /// </summary>
+        /// <param name="args"></param>
         protected void InvokeCancelled(CommandEventArgs args)
         {
             CommandEventHandler cancelled = Cancelled;
@@ -184,6 +217,5 @@ namespace FileManager.ViewModel.Commands
             if (cancelled != null)
                 cancelled(this, args);
         }
-
     }
 }

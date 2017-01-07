@@ -10,7 +10,6 @@ namespace FileManager.Model
 {
     public class FileSystemProvider
     {
-
         /// <summary>
         /// Get the local drivers of the system
         /// </summary>
@@ -50,8 +49,8 @@ namespace FileManager.Model
         /// <summary>
         /// Get the list of files 
         /// </summary>
-        /// <param name="path">The directory to get the files from</param>
-        /// <returns>Returns the List of File info for this directory. Return null if an exception is raised</returns>
+        /// <param name="path"></param>
+        /// <returns>Return the list of children files</returns>
         public static IList<FileInfo> GetChildrenFiles(string path)
         {
             try
@@ -67,12 +66,11 @@ namespace FileManager.Model
             return new List<FileInfo>();
         }
 
-
         /// <summary>
         /// Get the list of directories 
         /// </summary>
-        /// <param name="path">The directory to get the files from</param>
-        /// <returns>Returns the List of directories info for this directory. Return null if an exception is raised</returns>
+        /// <param name="path"></param>
+        /// <returns>Return the list of children directories</returns>
         public static IList<DirectoryInfo> GetChildrenDirectories(string path)
         {
             try

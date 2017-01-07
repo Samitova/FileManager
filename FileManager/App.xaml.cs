@@ -20,7 +20,7 @@ namespace FileManager
             base.OnStartup(e);
 
             Manager window = new Manager();
-
+            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             window.Show();
         }
     }

@@ -15,7 +15,7 @@ namespace FileManager.ViewModel
     internal class ManagerVievModel : ViewModelBase
     {
         private PaneViewModel _currentPaneViewModel;
-       
+
         public PaneViewModel LeftPaneViewModel { get; set; }
         public PaneViewModel RightPaneViewModel { get; set; }
         public PaneViewModel CurrentPaneViewModel
@@ -75,27 +75,28 @@ namespace FileManager.ViewModel
             CurrentPaneViewModel.Move(AsyncMoveCommand);
         }
 
+        internal void AsyncCopy()
+        {
+            CurrentPaneViewModel.Copy(AsyncCopyCommand);
+        }
+
         private void StartMove()
         {
-            AsyncMoveCommand.DoExecute(null);
-            if(AsyncMoveCommand.ProgressStatus > 0)
-                InitProgressWindow(AsyncCopyCommand);
-            
+
+            string message = $"Do you wand to move {CurrentPaneViewModel.GetFilesCount()} files?";
+            InitProgressWindow(message, AsyncMoveCommand);
         }
 
         private void StartDelete()
         {
-            AsyncDeleteCommand.DoExecute(null);
-            if (AsyncDeleteCommand.ProgressStatus > 0)
-                InitProgressWindow(AsyncCopyCommand);           
+            string message = $"Do you wand to delete {CurrentPaneViewModel.GetFilesCount()} files?";
+            InitProgressWindow(message, AsyncDeleteCommand);
         }
 
         public void StartCopy()
         {
-            AsyncCopyCommand.DoExecute(null);
-            if (AsyncDeleteCommand.ProgressStatus > 0)
-                InitProgressWindow(AsyncCopyCommand);
-           
+            string message = $"Do you wand to copy {CurrentPaneViewModel.GetFilesCount()} files?";
+            InitProgressWindow(message, AsyncCopyCommand);
         }
 
         internal void GetDetails()
@@ -110,13 +111,8 @@ namespace FileManager.ViewModel
             {
                 CurrentPaneViewModel.Create(name);
                 RefreshView();
-            }            
-        }
-
-        internal void AsyncCopy()
-        {
-            CurrentPaneViewModel.Copy(AsyncCopyCommand);
-        }
+            }
+        }      
 
         private void RefreshView(object sender, CommandEventArgs args)
         {
@@ -133,10 +129,12 @@ namespace FileManager.ViewModel
         /// <summary>
         /// Init progrees window 
         /// </summary>        
-        private void InitProgressWindow(AsynchronousCommand command)
+        private void InitProgressWindow(string massage, AsynchronousCommand asyncCommand)
         {
-            ProgressWindow window = new ProgressWindow() { DataContext = command };
+            ProgressViewModel progressModel = new ProgressViewModel(massage, asyncCommand);
+            ProgressWindow window = new ProgressWindow() { DataContext = progressModel };
             window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            progressModel.CurrentWindow = window;
             window.Show();
         }
 
@@ -147,7 +145,7 @@ namespace FileManager.ViewModel
         /// <returns></returns>
         private string GetCreatingFileName()
         {
-            CreateDirectory createDirWindow = new CreateDirectory();            
+            CreateDirectory createDirWindow = new CreateDirectory();
             createDirWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             createDirWindow.ShowDialog();
             return createDirWindow.DirName;

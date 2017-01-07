@@ -10,14 +10,21 @@
         Title="Manager" Height="600" Width="900">
 
     <Window.Resources>
-        <vm:ManagerVievModel x:Key="managerVievModel"/>
-        <converter:BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter"/>
+        <vm:ManagerVievModel x:Key="managerVievModel"/>        
     </Window.Resources>
+    
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding StartCopyCommand}" Key="F5"/>
+        <KeyBinding Command="{Binding StartMoveCommand}" Key="F6"/>
+        <KeyBinding Command="{Binding CreateCommand}" Key="F7"/>
+        <KeyBinding Command="{Binding StartDeleteCommand}" Key="F8"/>
+        <KeyBinding Command="{Binding DetailsCommand}" Key="F9"/>
+    </Window.InputBindings>
 
-    <Grid x:Name="OuterGrid" PreviewKeyDown="OuterGrid_PreviewKeyDown">
+    <Grid x:Name="OuterGrid">
         <Grid.RowDefinitions >
             <RowDefinition/>
-            <RowDefinition Height="36"></RowDefinition>
+            <RowDefinition Height="42"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" x:Name="ManagerGrid" >
             <Grid.ColumnDefinitions>
@@ -25,22 +32,22 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <!--Display the  left side pane -->
-            <local:Pane x:Name="_leftPane" Grid.Column="0" Grid.Row="0" PreviewMouseLeftButtonDown="LeftPane_PreviewMouseLeftButtonDown" SetFocusedPane="SetCurrentFocusedPane" ></local:Pane>
+            <local:Pane x:Name="_leftPane" Grid.Column="0" Grid.Row="0" PreviewMouseLeftButtonDown="LeftPane_PreviewMouseLeftButtonDown" NeedsUpdateSource="RefreshView"  SetFocusedPane="SetCurrentFocusedPane" ></local:Pane>
 
-            <!-- Pane splitter-->
             <GridSplitter Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" Width="3" Background="Gray"/>
 
             <!--Display the right side pane-->
-            <local:Pane x:Name="_rightPane"  Grid.Column="1" Grid.Row="0"  PreviewMouseLeftButtonDown="RightPane_PreviewMouseLeftButtonDown" SetFocusedPane="SetCurrentFocusedPane" ></local:Pane>
+            <local:Pane x:Name="_rightPane"  Grid.Column="1" Grid.Row="0"  PreviewMouseLeftButtonDown="RightPane_PreviewMouseLeftButtonDown" NeedsUpdateSource="RefreshView" SetFocusedPane="SetCurrentFocusedPane" ></local:Pane>
         </Grid>
-        <Button x:Name="copyButton" Content="F5 Copy" HorizontalAlignment="Left" Margin="5,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Background="White" Height="21" Command="{Binding StartCopyCommand}"/>
-        <Button x:Name="moveButton" Content="F6 Move" HorizontalAlignment="Left" Margin="95,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Background="White" Height="21" Command="{Binding StartMoveCommand}"/>
-        <Button x:Name="createButton" Content="F7 Create" HorizontalAlignment="Left" Margin="186,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Background="White" Height="21" Command="{Binding CreateCommand}"/>
-        <Button x:Name="deleteButton" Content="F8 Delete" HorizontalAlignment="Left" Margin="277,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Background="White" Height="21" Command="{Binding StartDeleteCommand}"/>
-        <Button x:Name="detailsButton" Content="F9 Details" HorizontalAlignment="Left" Margin="370,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Background="White" Height="21" Command="{Binding DetailsCommand}"/>
-        <StackPanel  Grid.Row="1" Orientation="Horizontal" Margin="500,0,0,0" Visibility="{Binding AsyncCommand2.IsExecuting, Converter={StaticResource booleanToVisibilityConverter}}">
-            <ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="21" Margin="10,8,0,0" Grid.Row="1" VerticalAlignment="Top" Width="217" Value="{Binding AsyncCommand2.ProgressStatus, Mode=OneWay}"/>
-            <Button x:Name="cancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="30,8,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Background="White" Height="21" Command="{Binding AsyncCommand2.CancelCommand}"/>
-        </StackPanel>
+        <Border Grid.Row="1" BorderThickness="1" BorderBrush="Silver">
+            <!--Display the panel with command buttons-->
+            <StackPanel x:Name="buttonsPanel"  Orientation="Horizontal" Margin="0,0,0,0">
+                <Button x:Name="copyButton" Content="F5 Copy" Margin="15,9,0,10"  Width="75" Background="White" Height="21" Command="{Binding StartCopyCommand}"/>
+                <Button x:Name="moveButton" Content="F6 Move" Margin="15,9,0,10" Width="75" Background="White" Height="21" Command="{Binding StartMoveCommand}"/>
+                <Button x:Name="createButton" Content="F7 Create" Margin="15,9,0,10" Width="75" Background="White" Height="21" Command="{Binding CreateCommand}"/>
+                <Button x:Name="deleteButton" Content="F8 Delete"  Margin="15,9,0,10" Width="75" Background="White" Height="21" Command="{Binding StartDeleteCommand}"/>
+                <Button x:Name="detailsButton" Content="F9 Details" Margin="15,9,0,10" Width="75" Background="White" Height="21" Command="{Binding DetailsCommand}"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

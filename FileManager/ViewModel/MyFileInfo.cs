@@ -18,7 +18,6 @@ namespace FileManager.ViewModel
                 return (attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly;
             }
         }
-
         public bool IsHidden
         {
             get
@@ -35,6 +34,10 @@ namespace FileManager.ViewModel
             }
         }
 
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="file"></param>
         public MyFileInfo(FileInfo file)
         {
             Name = System.IO.Path.GetFileNameWithoutExtension(file.Name);
@@ -199,21 +202,30 @@ namespace FileManager.ViewModel
             MessageBox.Show(builder.ToString(), "File Details");
         }
 
+        /// <summary>
+        /// Execute file
+        /// </summary>
         public override void Execute()
         {
             System.Diagnostics.Process.Start(this.Path);
         }
 
+        /// <summary>
+        /// NotSupported
+        /// </summary>
+        /// <param name="dirName"></param>
         public override void Create(string dirName)
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// NotSupported
+        /// </summary>
+        /// <returns></returns>
         public override List<SystemFileItem> GetChildren()
         {
             throw new NotSupportedException();
-        }
-
-       
+        }     
     }
 }

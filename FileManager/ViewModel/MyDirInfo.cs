@@ -76,6 +76,10 @@ namespace FileManager.ViewModel
             }
         }
 
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="dir"></param>
         public MyDirInfo(DirectoryInfo dir)
         {
             Name = dir.Name;
@@ -292,9 +296,6 @@ namespace FileManager.ViewModel
             }
         }
 
-        public override void Execute()
-        { }
-
         public override List<SystemFileItem> GetChildren()
         {
             IList<SystemFileItem> childrenDirList = new List<SystemFileItem>();
@@ -306,6 +307,10 @@ namespace FileManager.ViewModel
 
             return childrenDirList.Concat(FileSystemProvider.GetChildrenFiles(Path).Select(dir => new MyFileInfo(dir)).ToList<SystemFileItem>()).ToList();
         }
+
+
+        public override void Execute()
+        { }
 
     }
 }

@@ -7,29 +7,36 @@ using System.Windows;
 
 namespace FileManager.ViewModel.Converters
 {
-  public class BooleanToVisibilityConverter : IValueConverter
-  {
-   
-    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-    {      
-      if (value is bool == false)
-        return null;
-            
-      bool boolean = (bool)value;
-      
-      if (parameter != null && parameter.ToString() == "Invert")
-      {
-        return boolean ? Visibility.Collapsed : Visibility.Visible;
-      }
-      else
-      {
-        return boolean ? Visibility.Visible : Visibility.Collapsed;
-      }
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    public class BooleanToVisibilityConverter : IValueConverter
     {
-      throw new NotImplementedException();
+        /// <summary>
+        /// Convert true to visible state, "invert" to collapsed
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="targetType"></param>
+        /// <param name="parameter"></param>
+        /// <param name="culture"></param>
+        /// <returns></returns>
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is bool == false)
+                return null;
+
+            bool boolean = (bool)value;
+
+            if (parameter != null && parameter.ToString() == "Invert")
+            {
+                return boolean ? Visibility.Collapsed : Visibility.Visible;
+            }
+            else
+            {
+                return boolean ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
-  }
 }

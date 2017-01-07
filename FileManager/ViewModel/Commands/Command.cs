@@ -7,50 +7,65 @@ namespace FileManager.ViewModel.Commands
 
     public delegate void CancelCommandEventHandler(object sender, CancelCommandEventArgs args);
 
+    /// <summary>
+    /// Holds the command parameter
+    /// </summary>
     public class CommandEventArgs : EventArgs
     {
         public object Parameter { get; set; }
     }
 
+    /// <summary>
+    /// Allows the event to be cancelled.
+    /// </summary>
     public class CancelCommandEventArgs : CommandEventArgs
     {
         public bool Cancel { get; set; }
     }
 
+
+
     public class Command : ICommand
     {
-        protected Action action = null;
-        protected Action<object> parameterizedAction = null;
-        private bool canExecute = false;
+        protected Action _action = null;
+        protected Action<object> _parameterizedAction = null;
+        private bool _canExecute = false;
 
         /// <summary>
-        /// Occurs when can execute is changed.
+        /// Occurs when canExecute is changed
         /// </summary>
         public event EventHandler CanExecuteChanged;
 
         /// <summary>
-        /// Occurs when the command is about to execute.
+        /// Occurs when the command is executing
         /// </summary>
         public event CancelCommandEventHandler Executing;
 
         /// <summary>
-        /// Occurs when the command executed.
+        /// Occurs when the command executed
         /// </summary>
-        public event CommandEventHandler Executed;
+        public event CommandEventHandler Executed;             
 
-        public Command()
-        { }
-
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="canExecute"></param>
         public Command(Action action, bool canExecute = true)
         {
-            this.action = action;
-            this.canExecute = canExecute;
+            _action = action;
+            _canExecute = canExecute;
         }
 
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="parameterizedAction"></param>
+        /// <param name="canExecute"></param>
         public Command(Action<object> parameterizedAction, bool canExecute = true)
         {
-            this.parameterizedAction = parameterizedAction;
-            this.canExecute = canExecute;
+            _parameterizedAction = parameterizedAction;
+            _canExecute = canExecute;
         }
 
         /// <summary>
@@ -58,7 +73,7 @@ namespace FileManager.ViewModel.Commands
         /// </summary>
         /// <param name="param"></param>
         public virtual void DoExecute(object param)
-        {            
+        {
             CancelCommandEventArgs args = new CancelCommandEventArgs() { Parameter = param, Cancel = false };
             InvokeExecuting(args);
 
@@ -66,20 +81,28 @@ namespace FileManager.ViewModel.Commands
                 return;
 
             InvokeAction(param);
-            
+
             InvokeExecuted(new CommandEventArgs() { Parameter = param });
         }
 
+        /// <summary>
+        /// Call the action or the parameterized action, whichever has been set
+        /// </summary>
+        /// <param name="param"></param>
         protected void InvokeAction(object param)
         {
-            Action theAction = action;
-            Action<object> theParameterizedAction = parameterizedAction;
+            Action theAction = _action;
+            Action<object> theParameterizedAction = _parameterizedAction;
             if (theAction != null)
                 theAction();
             else if (theParameterizedAction != null)
                 theParameterizedAction(param);
         }
 
+        /// <summary>
+        /// Call the executed function
+        /// </summary>
+        /// <param name="args"></param>
         protected void InvokeExecuted(CommandEventArgs args)
         {
             CommandEventHandler executed = Executed;
@@ -88,10 +111,14 @@ namespace FileManager.ViewModel.Commands
                 executed(this, args);
         }
 
+        /// <summary>
+        /// Call the executing function
+        /// </summary>
+        /// <param name="args"></param>
         protected void InvokeExecuting(CancelCommandEventArgs args)
         {
             CancelCommandEventHandler executing = Executing;
-                       
+
             if (executing != null)
                 executing(this, args);
         }
@@ -99,17 +126,15 @@ namespace FileManager.ViewModel.Commands
         /// <summary>
         /// Gets or sets a value indicating whether this instance can execute.
         /// </summary>
-        /// <value>
-        /// 	<c>true</c> if this instance can execute; otherwise, <c>false</c>.
-        /// </value>
+        /// <value> </value>
         public bool CanExecute
         {
-            get { return canExecute; }
+            get { return _canExecute; }
             set
             {
-                if (canExecute != value)
+                if (_canExecute != value)
                 {
-                    canExecute = value;
+                    _canExecute = value;
                     EventHandler canExecuteChanged = CanExecuteChanged;
                     if (canExecuteChanged != null)
                         canExecuteChanged(this, EventArgs.Empty);
@@ -117,32 +142,24 @@ namespace FileManager.ViewModel.Commands
             }
         }
 
-        #region ICommand Members
-
         /// <summary>
         /// Defines the method that determines whether the command can execute in its current state.
         /// </summary>
-        /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
-        /// <returns>
-        /// true if this command can be executed; otherwise, false.
-        /// </returns>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
         bool ICommand.CanExecute(object parameter)
         {
-            return canExecute;
+            return _canExecute;
         }
 
         /// <summary>
         /// Defines the method to be called when the command is invoked.
         /// </summary>
-        /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
+        /// <param name="parameter"></param>
         void ICommand.Execute(object parameter)
         {
-            this.DoExecute(parameter);
-
+            DoExecute(parameter);
         }
-
-        #endregion
-
     }
 
 }

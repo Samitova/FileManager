@@ -67,10 +67,9 @@
     <Compile Include="ViewModel\MyDriveInfo.cs" />
     <Compile Include="ViewModel\MyFileInfo.cs" />
     <Compile Include="ViewModel\PaneViewModel.cs" />
-    <Compile Include="ViewModel\ProgressModel.cs" />
+    <Compile Include="ViewModel\ProgressViewModel.cs" />
     <Compile Include="ViewModel\SystemFileItem.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
-    <Compile Include="ViewModel\ViewShow.cs" />
     <Compile Include="View\CreateDirectory.xaml.cs">
       <DependentUpon>CreateDirectory.xaml</DependentUpon>
     </Compile>

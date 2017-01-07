@@ -17,13 +17,8 @@ using System.Windows.Shapes;
 
 namespace FileManager.View
 {
-   
-    /// <summary>
-    /// Логика взаимодействия для Manager.xaml
-    /// </summary>
     public partial class Manager : Window
-    {
-        
+    {        
         private ManagerVievModel _managerVM;      
         private Pane FocusedPane;     
 
@@ -33,69 +28,50 @@ namespace FileManager.View
 
             _managerVM = new ManagerVievModel();
             DataContext = _managerVM;
-        
+            FocusedPane = _leftPane;
             _leftPane.DataContext = _managerVM.LeftPaneViewModel;
-            _rightPane.DataContext = _managerVM.RightPaneViewModel;         
-        }      
+            _rightPane.DataContext = _managerVM.RightPaneViewModel;
+        }
 
+        /// <summary>
+        /// Store dirrectory to copy
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void LeftPane_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             _leftPane.DirectoryToCopy = _rightPane.GetCurrentPath();            
         }
 
+        /// <summary>
+        /// Store dirrectory to copy
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RightPane_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             _rightPane.DirectoryToCopy = _leftPane.GetCurrentPath();
-        }
-
-        private void OuterGrid_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.F5)
-            {
-                //FocusedPane.PaneVM.Copy();
-                RefreshView();
-            }
-            if (e.Key == Key.F6)
-            {
-                //FocusedPane.PaneVM.Move();
-                //RefreshView();
-            }
-            if (e.Key == Key.F7)
-            {
-                //string name = GetCreatingFileName();
-                //if (name != null)
-                //{
-                //    FocusedPane.PaneVM.Create(name);
-                //    RefreshView();
-                //}
-            }
-            if (e.Key == Key.F8)
-            {
-                //FocusedPane.PaneVM.Delete();
-                //RefreshView();
-            }
-            if (e.Key == Key.F9)
-            {
-                FocusedPane.PaneVM.GetDetails();
-            }
-        }
+        }      
 
         /// <summary>
         /// Refresh view of dirs and files
         /// </summary>
-        private void RefreshView()
+        private void RefreshView(object sender, EventArgs e)
         {
             _rightPane.PaneVM.RefreshVisibleItems();
             _leftPane.PaneVM.RefreshVisibleItems();
         }
 
-       
-
-
+        /// <summary>
+        /// Get current pane
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SetCurrentFocusedPane(object sender, EventArgs e)
         {
             FocusedPane = (Pane)sender;
-            _managerVM.CurrentPaneViewModel = FocusedPane.PaneVM;            
+            _managerVM.CurrentPaneViewModel = FocusedPane.PaneVM;  
+                
         }
     }
 }

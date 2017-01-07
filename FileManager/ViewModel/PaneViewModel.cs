@@ -14,16 +14,17 @@ using System.Windows.Threading;
 
 namespace FileManager.ViewModel
 {
-    
+
     class PaneViewModel : ViewModelBase
     {
+        public event EventHandler NeedsUpdateSource;
 
         private SystemFileItem _currentDrive;
-        private IList<SystemFileItem> _drives;
         private SystemFileItem _currentItem;
+        private IList<SystemFileItem> _drives;        
         private IList<SystemFileItem> _visibleItems;
         private IList<SystemFileItem> _selectedItems;
-       
+
         public string DirectoryToCopy { get; set; }
 
         public SystemFileItem SelectedItem { get; set; }
@@ -112,10 +113,8 @@ namespace FileManager.ViewModel
         {
             RefreshDrivers();
             CurrentDrive = new MyDriveInfo(FileSystemProvider.GetDrive(@"c:\"));
-            CurrentItem = CurrentDrive;          
-
+            CurrentItem = CurrentDrive;
         }
-
 
         /// <summary>
         /// Get the children of current directory and stores them in the CurrentItems Observable collection
@@ -162,21 +161,17 @@ namespace FileManager.ViewModel
         /// <param name="selectedItems">selectedItems</param>
         public void Move(AsynchronousCommand command)
         {
-            int filesCount = GetFilesCount(SelectedItems);
-            string message = $"Do you want to move {filesCount} files to {DirectoryToCopy}?";
-           
-            MessageBoxResult resultDeleteConformation = MessageBox.Show(message, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (resultDeleteConformation == MessageBoxResult.Yes)
+            int filesCount = GetFilesCount();
+
+            foreach (SystemFileItem item in SelectedItems)
             {
-                foreach (SystemFileItem item in SelectedItems)
-                {
-                    if (command.CancelIfRequested())
-                        return;
-                    command.ReportProgress(() => item.Move(DirectoryToCopy));
-                    command.ProgressStatus += 100 / filesCount;
-                    System.Threading.Thread.Sleep(2000);
-                }
-            }            
+                if (command.CancelIfRequested())
+                    return;
+                command.ReportProgress(() => item.Move(DirectoryToCopy));
+                command.ProgressStatus += 100 / filesCount;
+                System.Threading.Thread.Sleep(1000);
+            }
+            OnNeedsUpdateSource(new EventArgs());
         }
 
         /// <summary>
@@ -185,22 +180,17 @@ namespace FileManager.ViewModel
         /// <param name="selectedItems">selectedItems</param>
         public void Delete(AsynchronousCommand command)
         {
-            int filesCount = GetFilesCount(SelectedItems);
-            string message = $"Do you want to delete {filesCount} files?";
+            int filesCount = GetFilesCount();
 
-            MessageBoxResult resultDeleteConformation = MessageBox.Show(message, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-            if (resultDeleteConformation == MessageBoxResult.Yes)
+            foreach (SystemFileItem item in SelectedItems)
             {
-                foreach (SystemFileItem item in SelectedItems)
-                {
-                    if (command.CancelIfRequested())
-                        return;
-                    command.ReportProgress(() => item.Delete());
-                    command.ProgressStatus += 100 / filesCount;
-                    System.Threading.Thread.Sleep(2000);
-                }
-            }            
+                if (command.CancelIfRequested())
+                    return;
+                command.ReportProgress(() => item.Delete());
+                command.ProgressStatus += 100 / filesCount;
+                System.Threading.Thread.Sleep(2000);
+            }
+            OnNeedsUpdateSource(new EventArgs());
         }
 
         /// <summary>
@@ -209,38 +199,30 @@ namespace FileManager.ViewModel
         /// <param name="selectedItems">selectedItems</param>
         public void Copy(AsynchronousCommand command)
         {
-            int filesCount = GetFilesCount(SelectedItems);
-            string message = $"Do you want to copy {filesCount} files to {DirectoryToCopy}?";
+            int filesCount = GetFilesCount();
 
-            MessageBoxResult resultDeleteConformation = MessageBox.Show(message, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (resultDeleteConformation == MessageBoxResult.Yes)
+            foreach (SystemFileItem item in SelectedItems)
             {
-               
-                foreach (SystemFileItem item in SelectedItems)
-                {
-                    if (command.CancelIfRequested())
-                        return;
-                    command.ReportProgress(() => item.Copy(DirectoryToCopy));
-                    command.ProgressStatus += 100/filesCount;
-                    System.Threading.Thread.Sleep(2000);
-                }
+                if (command.CancelIfRequested())
+                    return;
+                command.ReportProgress(() => item.Copy(DirectoryToCopy));
+                command.ProgressStatus += 100 / filesCount;
+                System.Threading.Thread.Sleep(2000);                
             }
+            OnNeedsUpdateSource(new EventArgs());
         }
 
         /// <summary>
-        /// Get totla count of files
-        /// </summary>
-        /// <param name="selectedItems">selected files and directories</param>
+        /// Get totlal files count of Selected Items
+        /// </summary>        
         /// <returns></returns>
-        private int GetFilesCount(IList<SystemFileItem> selectedItems)
+        public int GetFilesCount()
         {
             int filesCount = 0;
-
-            foreach (SystemFileItem item in selectedItems)
+            foreach (SystemFileItem item in SelectedItems)
             {
-                filesCount+=item.TotalSubFilesCount;
+                filesCount += item.TotalSubFilesCount;
             }
-
             return filesCount;
         }
 
@@ -261,7 +243,8 @@ namespace FileManager.ViewModel
             if (CurrentItem != null)
             {
                 CurrentItem.Create(dirName);
-            }           
+            }
+            OnNeedsUpdateSource(new EventArgs());
         }
 
         /// <summary>
@@ -273,8 +256,14 @@ namespace FileManager.ViewModel
             if (SelectedItem != null)
             {
                 SelectedItem.Rename(newName);
-            }           
+            }
+            OnNeedsUpdateSource(new EventArgs());
         }
-      
+
+        public void OnNeedsUpdateSource(EventArgs e)
+        {
+            var handler = NeedsUpdateSource;
+            if (handler != null) handler(this, e);
+        }
     }
 }

@@ -32,13 +32,23 @@ namespace FileManager.View
             }
         }
 
-        public event EventHandler SetFocusedPane;
+        public event EventHandler SetFocusedPane;       
 
         public void OnSetFocusedDataGrid(EventArgs e)
         {
             var handler = SetFocusedPane;
             if (handler != null) handler(this, e);
+
         }
+
+        public event EventHandler NeedsUpdateSource;
+
+        public void OnNeedsUpdateSource(EventArgs e)
+        {
+            var handler = NeedsUpdateSource;
+            if (handler != null) handler(this, e);
+        }
+
 
         /// <summary>
         /// ctor
@@ -46,12 +56,13 @@ namespace FileManager.View
         public Pane()
         {           
             InitializeComponent();
-            this.Loaded += new RoutedEventHandler(ViewLoaded);
+            this.Loaded += new RoutedEventHandler(ViewLoaded);           
         }
 
         private void ViewLoaded(object sender, RoutedEventArgs e)
         {
-           PaneVM = this.DataContext as PaneViewModel;            
+           PaneVM = this.DataContext as PaneViewModel;
+           PaneVM.NeedsUpdateSource += (o, ea) => OnNeedsUpdateSource(ea);
         }
         
         public string GetCurrentPath()
