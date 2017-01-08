@@ -18,12 +18,13 @@ namespace FileManager.ViewModel
     class PaneViewModel : ViewModelBase
     {
         public event EventHandler NeedsUpdateSource;
-
+      
         private SystemFileItem _currentDrive;
         private SystemFileItem _currentItem;
-        private IList<SystemFileItem> _drives;        
+        private IList<SystemFileItem> _drives;
         private IList<SystemFileItem> _visibleItems;
         private IList<SystemFileItem> _selectedItems;
+        //private List<string> _foundItems;
 
         public string DirectoryToCopy { get; set; }
 
@@ -45,6 +46,23 @@ namespace FileManager.ViewModel
                 OnPropertyChanged("SelectedItems");
             }
         }
+
+        //public List<string> FoundItems
+        //{
+        //    get
+        //    {
+        //        if (_foundItems == null)
+        //        {
+        //            _foundItems = new List<string>();
+        //        }
+        //        return _foundItems;
+        //    }
+        //    set
+        //    {
+        //        _foundItems = value;
+        //        OnPropertyChanged("FoundItems");
+        //    }
+        //}
 
         public SystemFileItem CurrentItem
         {
@@ -159,16 +177,20 @@ namespace FileManager.ViewModel
         /// Move selected items
         /// </summary>
         /// <param name="selectedItems">selectedItems</param>
-        public void Move(AsynchronousCommand command)
+        public void Move(Action<int> progress, Func<bool> cancel)
         {
             int filesCount = GetFilesCount();
+            int counter = 0;
 
             foreach (SystemFileItem item in SelectedItems)
             {
-                if (command.CancelIfRequested())
+                if (cancel())
+                {
+                    OnNeedsUpdateSource(new EventArgs());
                     return;
-                command.ReportProgress(() => item.Move(DirectoryToCopy));
-                command.ProgressStatus += 100 / filesCount;
+                }
+                item.Move(DirectoryToCopy);
+                progress(counter += 100 / filesCount);
                 System.Threading.Thread.Sleep(1000);
             }
             OnNeedsUpdateSource(new EventArgs());
@@ -178,16 +200,20 @@ namespace FileManager.ViewModel
         /// Delete selected items
         /// </summary>
         /// <param name="selectedItems">selectedItems</param>
-        public void Delete(AsynchronousCommand command)
+        public void Delete(Action<int> progress, Func<bool> cancel)
         {
             int filesCount = GetFilesCount();
+            int counter = 0;
 
             foreach (SystemFileItem item in SelectedItems)
             {
-                if (command.CancelIfRequested())
+                if (cancel())
+                {
+                    OnNeedsUpdateSource(new EventArgs());
                     return;
-                command.ReportProgress(() => item.Delete());
-                command.ProgressStatus += 100 / filesCount;
+                }
+                item.Delete();
+                progress(counter += 100 / filesCount);
                 System.Threading.Thread.Sleep(2000);
             }
             OnNeedsUpdateSource(new EventArgs());
@@ -197,17 +223,21 @@ namespace FileManager.ViewModel
         /// Copy selected items
         /// </summary>
         /// <param name="selectedItems">selectedItems</param>
-        public void Copy(AsynchronousCommand command)
+        internal void Copy(Action<int> progress, Func<bool> cancel)
         {
             int filesCount = GetFilesCount();
+            int counter = 0;
 
             foreach (SystemFileItem item in SelectedItems)
             {
-                if (command.CancelIfRequested())
+                if (cancel())
+                {
+                    OnNeedsUpdateSource(new EventArgs());
                     return;
-                command.ReportProgress(() => item.Copy(DirectoryToCopy));
-                command.ProgressStatus += 100 / filesCount;
-                System.Threading.Thread.Sleep(2000);                
+                }
+                item.Copy(DirectoryToCopy);
+                progress(counter += 100 / filesCount);
+                System.Threading.Thread.Sleep(2000);
             }
             OnNeedsUpdateSource(new EventArgs());
         }
@@ -264,6 +294,6 @@ namespace FileManager.ViewModel
         {
             var handler = NeedsUpdateSource;
             if (handler != null) handler(this, e);
-        }
+        }      
     }
 }

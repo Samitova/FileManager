@@ -258,7 +258,7 @@ namespace FileManager.ViewModel
             string newDirName = System.IO.Path.Combine(Parent, newName);
             if (Path == newDirName) return;
             RenameDir(newDirName);
-        }
+        }    
 
         /// <summary>
         /// Rename/move Directory logic

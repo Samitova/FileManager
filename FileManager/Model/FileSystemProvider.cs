@@ -3,13 +3,23 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 
 namespace FileManager.Model
 {
     public class FileSystemProvider
     {
+        public static event EventHandler FoundItem;
+        public static event EventHandler ChangeDirectory;
+
+        public static List<string> FoundItems { get; set; }
+        public static string CurrentSearchDir { get; set; }
+
+        static FileSystemProvider()
+        {
+            FoundItems = new List<string>();
+        }
+
         /// <summary>
         /// Get the local drivers of the system
         /// </summary>
@@ -83,6 +93,90 @@ namespace FileManager.Model
             }
 
             return new List<DirectoryInfo>();
+        }
+
+        /// <summary>
+        /// Search files
+        /// </summary>
+        public static void SearchFiles(string pattern, string path, Action<int> progress, Func<bool> cancel)
+        {
+            if (!Directory.Exists(path))
+            {
+                MessageBox.Show("Search path wasn`t found");
+                return;
+            }
+            else
+            {
+                FoundItems.Clear();
+                SearchDir(pattern, path, progress, cancel);
+            }
+        }
+
+        /// <summary>
+        /// Recurent search files in directory and subdirectories
+        /// </summary>
+        /// <param name="pattern"></param>
+        /// <param name="path"></param>
+        /// <param name="progress"></param>
+        /// <param name="cancel"></param>
+        private static void SearchDir(string pattern, string path, Action<int> progress, Func<bool> cancel)
+        {
+            try
+            {
+                string[] dirs = Directory.GetDirectories(path);
+                SearchFilesInDir(pattern, path, progress, cancel);
+
+                foreach (string dir in dirs)
+                {
+                    if (cancel())
+                        return;
+
+                    CurrentSearchDir = dir;
+                    OnChangeDirectory(new EventArgs());
+
+                    SearchFilesInDir(pattern, dir, progress, cancel);
+                    SearchDir(pattern, dir, progress, cancel);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Search files in directory
+        /// </summary>
+        /// <param name="pattern"></param>
+        /// <param name="dir"></param>
+        /// <param name="progress"></param>
+        /// <param name="cancel"></param>
+        private static void SearchFilesInDir(string pattern, string dir, Action<int> progress, Func<bool> cancel)
+        {
+            string[] files = Directory.GetFiles(dir, pattern);
+            foreach (string file in files)
+            {
+                if (cancel())
+                    return;
+
+                FoundItems.Add(file);
+                OnFoundItem(new EventArgs());
+            }
+        }
+
+        public static void OnFoundItem(EventArgs e)
+        {
+            var handler = FoundItem;
+            if (handler != null) 
+                handler(null, e);
+        }
+
+
+        private static void OnChangeDirectory(EventArgs e)
+        {
+            var handler = ChangeDirectory;
+            if (handler != null)
+                handler(null, e);
         }
     }
 }

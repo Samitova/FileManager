@@ -1,0 +1,43 @@
+﻿<Window x:Class="FileManager.View.SearchView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileManager.View"
+        xmlns:converter="clr-namespace:FileManager.ViewModel.Converters"
+        mc:Ignorable="d"
+        Height="380" Width="500">
+    
+    <Window.Resources>
+        <converter:BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter"/>
+    </Window.Resources>
+
+    <Grid>
+        <StackPanel>
+            <TabControl>
+                <TabItem Header="Search">
+                    <StackPanel Height="270">
+                        <TextBlock Foreground="DarkSlateGray" Text="What search for:" Margin="5,0,0,5"/>
+                        <TextBox Name="searchText" Margin="5,0,10,5" Text="{Binding SearchingPattern, Mode=TwoWay}"/>
+                        <TextBlock Foreground="DarkSlateGray" Text="Where search:" Margin="5,0,0,5"/>
+                        <TextBox Name="searchPath" Margin="5,0,10,5" Text="{Binding SearchingPath, Mode=TwoWay}"/>
+                        <TextBlock Foreground="DarkSlateGray" Text="Found files:" Margin="5,0,0,5"/>
+                        <ListBox Height="128" Margin="5,0,10,0" ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding FoundFiles, IsAsync=True}">
+                        </ListBox>
+                        <TextBlock Foreground="DarkSlateGray" Text="{Binding CurrentSearchingDirectory}" Margin="5,5,10,5"/>
+                    </StackPanel>
+                </TabItem>
+
+            </TabControl>
+            <StackPanel  HorizontalAlignment="Center" Margin="0,10,0,10" Orientation="Horizontal" Visibility="{Binding SearchCommand.IsExecuting, Converter={StaticResource booleanToVisibilityConverter}, ConverterParameter=Invert}">
+                <Button x:Name="okButton" Content="OK" Margin="0,0,10,0" Width="90" Height="25" HorizontalAlignment="Center" Command="{Binding SearchCommand}"/>
+                <Button x:Name="cancelButton" Content="Cancel" Width="90" Height="25" HorizontalAlignment="Center" Command="{Binding CloseCommand}"/>
+           
+            </StackPanel>
+            <StackPanel  HorizontalAlignment="Center" Margin="0,10,0,10" Orientation="Horizontal" Visibility="{Binding SearchCommand.IsExecuting, Converter={StaticResource booleanToVisibilityConverter}}">
+                <Button x:Name="stopButton" IsEnabled="True"  Content="Stop" Margin="0,0,10,0" Width="90" Height="25" HorizontalAlignment="Center" Command="{Binding StopCommand}"/>
+                <Button x:Name="cancel2Button" Content="Cancel" Width="90" Height="25" HorizontalAlignment="Center" Command="{Binding CloseCommand}"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

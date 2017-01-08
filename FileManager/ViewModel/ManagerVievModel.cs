@@ -1,23 +1,30 @@
 ﻿using FileManager.View;
 using FileManager.ViewModel.Commands;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
+
 
 namespace FileManager.ViewModel
 {
     internal class ManagerVievModel : ViewModelBase
     {
-        private PaneViewModel _currentPaneViewModel;
+        private PaneViewModel _currentPaneViewModel;        
 
         public PaneViewModel LeftPaneViewModel { get; set; }
         public PaneViewModel RightPaneViewModel { get; set; }
+
+        public RelayCommand CreateCommand { get; set; }
+        public RelayCommand DetailsCommand { get; set; }
+
+        public RelayCommand StartSearchCommand { get; set; }
+        public RelayCommand StartCopyCommand { get; set; }
+        public RelayCommand StartMoveCommand { get; set; }
+        public RelayCommand StartDeleteCommand { get; set; }
+
+        public AsyncRelayCommand AsyncCopyCommand { get; set; }
+        public AsyncRelayCommand AsyncMoveCommand { get; set; }
+        public AsyncRelayCommand AsyncDeleteCommand { get; set; }
+
         public PaneViewModel CurrentPaneViewModel
         {
             get { return _currentPaneViewModel; }
@@ -27,19 +34,7 @@ namespace FileManager.ViewModel
                 OnPropertyChanged("CurrentPaneViewModel");
             }
         }
-
-        public Command CreateCommand { get; set; }
-        public Command DetailsCommand { get; set; }
-
-        public Command StartCopyCommand { get; set; }
-        public Command StartMoveCommand { get; set; }
-        public Command StartDeleteCommand { get; set; }
-
-        public AsynchronousCommand AsyncCopyCommand { get; set; }
-        public AsynchronousCommand AsyncMoveCommand { get; set; }
-        public AsynchronousCommand AsyncDeleteCommand { get; set; }
-
-
+      
         /// <summary>
         /// ctor
         /// </summary>
@@ -50,86 +45,108 @@ namespace FileManager.ViewModel
 
             CurrentPaneViewModel = LeftPaneViewModel;
 
-            StartCopyCommand = new Command(StartCopy);
-            DetailsCommand = new Command(GetDetails);
-            CreateCommand = new Command(CreateDirectory);
-            StartDeleteCommand = new Command(StartDelete);
-            StartMoveCommand = new Command(StartMove);
-
-            AsyncCopyCommand = new AsynchronousCommand(AsyncCopy);
-            AsyncCopyCommand.Executed += RefreshView;
-            AsyncMoveCommand = new AsynchronousCommand(AsyncMove);
-            AsyncMoveCommand.Executed += RefreshView;
-            AsyncDeleteCommand = new AsynchronousCommand(AsyncDelete);
-            AsyncDeleteCommand.Executed += RefreshView;
-
+            InitCommands();
         }
 
-        private void AsyncDelete()
+        /// <summary>
+        /// Init manager commands
+        /// </summary>
+        private void InitCommands()
         {
-            CurrentPaneViewModel.Delete(AsyncDeleteCommand);
+            DetailsCommand = new RelayCommand(GetDetails);
+            CreateCommand = new RelayCommand(CreateDirectory);
+            StartSearchCommand = new RelayCommand(StartSearchFiles);
+            StartDeleteCommand = new RelayCommand(StartDelete);
+            StartMoveCommand = new RelayCommand(StartMove);
+            StartCopyCommand = new RelayCommand(StartCopy);
+
+            AsyncCopyCommand = new AsyncRelayCommand(AsyncCopy);
+            AsyncMoveCommand = new AsyncRelayCommand(AsyncMove);
+            AsyncDeleteCommand = new AsyncRelayCommand(AsyncDelete);       
+
         }
 
-        private void AsyncMove()
-        {
-            CurrentPaneViewModel.Move(AsyncMoveCommand);
-        }
-
-        internal void AsyncCopy()
-        {
-            CurrentPaneViewModel.Copy(AsyncCopyCommand);
-        }
-
+        /// <summary>
+        /// Init move process
+        /// </summary>
         private void StartMove()
         {
-
             string message = $"Do you wand to move {CurrentPaneViewModel.GetFilesCount()} files?";
             InitProgressWindow(message, AsyncMoveCommand);
         }
 
+        /// <summary>
+        /// Init delete process
+        /// </summary>
         private void StartDelete()
         {
             string message = $"Do you wand to delete {CurrentPaneViewModel.GetFilesCount()} files?";
             InitProgressWindow(message, AsyncDeleteCommand);
         }
 
+        /// <summary>
+        /// Init copy process
+        /// </summary>
         public void StartCopy()
         {
             string message = $"Do you wand to copy {CurrentPaneViewModel.GetFilesCount()} files?";
-            InitProgressWindow(message, AsyncCopyCommand);
+            InitProgressWindow(message, AsyncCopyCommand);            
         }
 
+        /// <summary>
+        /// Async delete function
+        /// </summary>
+        /// <param name="progress">Action to get delete progress</param>
+        /// <param name="cancel">Func to cancel delete </param>
+        private void AsyncDelete(Action<int> progress, Func<bool> cancel)
+        {
+            CurrentPaneViewModel.Delete(progress, cancel);
+        }
+
+        /// <summary>
+        /// Async move function
+        /// </summary>
+        /// <param name="progress">Action to get move progress</param>
+        /// <param name="cancel">Func to cancel move </param>
+        private void AsyncMove(Action<int> progress, Func<bool> cancel)
+        {
+            CurrentPaneViewModel.Move(progress, cancel);
+        }
+
+        /// <summary>
+        /// Async copy function
+        /// </summary>
+        /// <param name="progress">Action to get copy progress</param>
+        /// <param name="cancel">Func to cancel copy </param>
+        internal void AsyncCopy(Action<int> progress, Func<bool> cancel)
+        {
+            CurrentPaneViewModel.Copy(progress, cancel);
+        }
+
+        /// <summary>
+        /// Get details
+        /// </summary>
         internal void GetDetails()
         {
             CurrentPaneViewModel.GetDetails();
         }
 
+        /// <summary>
+        /// Create directory
+        /// </summary>
         internal void CreateDirectory()
         {
             string name = GetCreatingFileName();
             if (name != null)
             {
-                CurrentPaneViewModel.Create(name);
-                RefreshView();
+                CurrentPaneViewModel.Create(name);                
             }
-        }      
-
-        private void RefreshView(object sender, CommandEventArgs args)
-        {
-            LeftPaneViewModel.RefreshVisibleItems();
-            RightPaneViewModel.RefreshVisibleItems();
-        }
-
-        private void RefreshView()
-        {
-            LeftPaneViewModel.RefreshVisibleItems();
-            RightPaneViewModel.RefreshVisibleItems();
         }
 
         /// <summary>
-        /// Init progrees window 
+        /// Invoke progrees window 
         /// </summary>        
-        private void InitProgressWindow(string massage, AsynchronousCommand asyncCommand)
+        private void InitProgressWindow(string massage, AsyncRelayCommand asyncCommand)
         {
             ProgressViewModel progressModel = new ProgressViewModel(massage, asyncCommand);
             ProgressWindow window = new ProgressWindow() { DataContext = progressModel };
@@ -138,9 +155,8 @@ namespace FileManager.ViewModel
             window.Show();
         }
 
-
         /// <summary>
-        /// Get creating directory name
+        /// Invoke window to get name for creating directory 
         /// </summary>
         /// <returns></returns>
         private string GetCreatingFileName()
@@ -150,5 +166,18 @@ namespace FileManager.ViewModel
             createDirWindow.ShowDialog();
             return createDirWindow.DirName;
         }
+
+        /// <summary>
+        /// Invoke search window
+        /// </summary>
+        private void StartSearchFiles()
+        {
+            SearchViewModel searchViewModel = new SearchViewModel();
+            SearchView searchWindow = new SearchView() { DataContext = searchViewModel };
+            searchWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            searchViewModel.CurrentWindow = searchWindow;
+            searchWindow.Show();
+        }
+               
     }
 }

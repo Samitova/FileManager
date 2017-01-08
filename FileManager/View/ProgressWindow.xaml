@@ -15,14 +15,15 @@
         <StackPanel Name="progressPanel" Visibility="{Binding AsyncCommand.IsExecuting, Converter={StaticResource booleanToVisibilityConverter}}">
             <TextBlock x:Name="progressDialogMessage" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Work is in progress. Please stand by..." VerticalAlignment="Top" Height="22" Width="363" FontFamily="Times New Roman" FontSize="16"/>
             <ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" VerticalAlignment="Top" Width="363" Value="{Binding AsyncCommand.ProgressStatus}"/>
-            <Button x:Name="cancelProgressButton" Content="Cancel" HorizontalAlignment="Left" Margin="301,10,0,0" VerticalAlignment="Top" Width="72" Height="21" FontFamily="Times New Roman" FontSize="12" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"/>
+            <Button x:Name="cancelProgressButton" Content="Cancel" HorizontalAlignment="Left" Margin="302,10,0,0" VerticalAlignment="Top" Width="72" Height="21" FontFamily="Times New Roman" FontSize="12" Command="{Binding CloseCommand}"/>
+           
         </StackPanel>
         <StackPanel Name="dialogPanel" Visibility="{Binding AsyncCommand.IsExecuting, Converter={StaticResource booleanToVisibilityConverter}, ConverterParameter=Invert}">
             <TextBlock x:Name="txtDialogMessage" HorizontalAlignment="Left" Margin="20,20,0,0" TextWrapping="Wrap" Text="{Binding Message}" VerticalAlignment="Top" Height="22" Width="363" FontFamily="Times New Roman" FontSize="16"/>
             <StackPanel Orientation="Horizontal">
-                <Button x:Name="okButton" Content="OK" HorizontalAlignment="Left" Margin="210,30,0,0" VerticalAlignment="Top" Width="72" Height="21" FontFamily="Times New Roman" FontSize="12" Command="{Binding AsyncCommand}"/>
-                <Button x:Name="cancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="20,30,0,0" VerticalAlignment="Top" Width="72" Height="21" FontFamily="Times New Roman" FontSize="12" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"/>
-            </StackPanel>
+                <Button x:Name="okButton" Content="OK" HorizontalAlignment="Left" Margin="210,33,0,0" VerticalAlignment="Top" Width="72" Height="21" FontFamily="Times New Roman" FontSize="12" Command="{Binding AsyncCommand}"/>
+                <Button x:Name="cancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="20,33,0,0" VerticalAlignment="Top" Width="72" Height="21" FontFamily="Times New Roman" FontSize="12" Command="{Binding CloseCommand}"/>
+              </StackPanel>
         </StackPanel>
     </Grid>
 </Window>

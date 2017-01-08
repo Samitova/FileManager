@@ -47,6 +47,7 @@
                 <Button x:Name="createButton" Content="F7 Create" Margin="15,9,0,10" Width="75" Background="White" Height="21" Command="{Binding CreateCommand}"/>
                 <Button x:Name="deleteButton" Content="F8 Delete"  Margin="15,9,0,10" Width="75" Background="White" Height="21" Command="{Binding StartDeleteCommand}"/>
                 <Button x:Name="detailsButton" Content="F9 Details" Margin="15,9,0,10" Width="75" Background="White" Height="21" Command="{Binding DetailsCommand}"/>
+                <Button x:Name="searchButton" Content="F10 Search" Margin="15,9,0,10" Width="75" Background="White" Height="21" Command="{Binding StartSearchCommand}"/>
             </StackPanel>
         </Border>
     </Grid>

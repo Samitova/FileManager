@@ -2,6 +2,7 @@
 using FileManager.ViewModel.Commands;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,20 +14,20 @@ namespace FileManager.ViewModel
     {       
         public string Message { get; set; }
 
-        public AsynchronousCommand AsyncCommand { get; set; }
+        public AsyncRelayCommand AsyncCommand { get; set; }
 
-        public Command CloseCommand { get; set; }
+        public RelayCommand CloseCommand { get; set; }
 
         public ProgressWindow CurrentWindow { get; set; }
 
         public ProgressViewModel()
         { }
 
-        public ProgressViewModel(string message, AsynchronousCommand asyncCommand)
+        public ProgressViewModel(string message, AsyncRelayCommand asyncCommand)
         {
             Message = message;
             AsyncCommand = asyncCommand;
-            CloseCommand = new Command(Close);
+            CloseCommand = new RelayCommand(Close);
             AsyncCommand.Executed += CloseOnExecuted;
         }
 
@@ -37,7 +38,7 @@ namespace FileManager.ViewModel
         {
             if (AsyncCommand.IsExecuting)
             {
-                AsyncCommand.CancelCommand.DoExecute(null);
+                AsyncCommand.IsCancellationRequested = true;
             }
 
             CurrentWindow.Close();
@@ -48,9 +49,9 @@ namespace FileManager.ViewModel
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        void CloseOnExecuted(object sender, CommandEventArgs args)
+        void CloseOnExecuted(object sender, RunWorkerCompletedEventArgs args)
         {
-            CurrentWindow.Close();
+            CurrentWindow.Close();            
         }
     }
 }
