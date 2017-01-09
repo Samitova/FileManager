@@ -172,7 +172,7 @@ namespace FileManager.ViewModel
         /// </summary>
         private void StartSearchFiles()
         {
-            SearchViewModel searchViewModel = new SearchViewModel();
+            SearchViewModel searchViewModel = new SearchViewModel(LeftPaneViewModel);
             SearchView searchWindow = new SearchView() { DataContext = searchViewModel };
             searchWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             searchViewModel.CurrentWindow = searchWindow;

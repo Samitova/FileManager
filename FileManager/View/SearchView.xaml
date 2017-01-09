@@ -22,7 +22,7 @@
                         <TextBlock Foreground="DarkSlateGray" Text="Where search:" Margin="5,0,0,5"/>
                         <TextBox Name="searchPath" Margin="5,0,10,5" Text="{Binding SearchingPath, Mode=TwoWay}"/>
                         <TextBlock Foreground="DarkSlateGray" Text="Found files:" Margin="5,0,0,5"/>
-                        <ListBox Height="128" Margin="5,0,10,0" ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding FoundFiles, IsAsync=True}">
+                        <ListBox x:Name="filesListBox" Height="128" Margin="5,0,10,0" ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding FoundFiles, IsAsync=True}" MouseDoubleClick="filesListBox_MouseDoubleClick" SelectionChanged="filesListBox_SelectionChanged">
                         </ListBox>
                         <TextBlock Foreground="DarkSlateGray" Text="{Binding CurrentSearchingDirectory}" Margin="5,5,10,5"/>
                     </StackPanel>

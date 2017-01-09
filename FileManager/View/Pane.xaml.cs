@@ -28,7 +28,6 @@ namespace FileManager.View
         {
             var handler = SetFocusedPane;
             if (handler != null) handler(this, e);
-
         }
 
         public event EventHandler NeedsUpdateSource;
@@ -39,20 +38,20 @@ namespace FileManager.View
             if (handler != null) handler(this, e);
         }
 
-
         /// <summary>
         /// ctor
         /// </summary>
         public Pane()
         {           
             InitializeComponent();
+            PaneVM = new PaneViewModel();
             this.Loaded += new RoutedEventHandler(ViewLoaded);           
         }
 
         private void ViewLoaded(object sender, RoutedEventArgs e)
         {
-           PaneVM = this.DataContext as PaneViewModel;
-           PaneVM.NeedsUpdateSource += (o, ea) => OnNeedsUpdateSource(ea);
+           PaneVM = this.DataContext as PaneViewModel;          
+           PaneVM.NeedsUpdateSource += (o, ea) => OnNeedsUpdateSource(ea);        
         }
         
         public string GetCurrentPath()

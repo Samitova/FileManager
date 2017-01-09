@@ -60,6 +60,9 @@
     </Compile>
     <Compile Include="Model\FileSystemProvider.cs" />
     <Compile Include="ViewModel\Commands\AsyncRelayCommand.cs" />
+    <Compile Include="ViewModel\Commands\EventBinding.cs" />
+    <Compile Include="ViewModel\Commands\EventBindingCollection.cs" />
+    <Compile Include="ViewModel\Commands\EventBindings.cs" />
     <Compile Include="ViewModel\Commands\RelayCommand.cs" />
     <Compile Include="ViewModel\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="ViewModel\ManagerVievModel.cs" />

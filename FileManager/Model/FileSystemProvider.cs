@@ -121,26 +121,33 @@ namespace FileManager.Model
         /// <param name="cancel"></param>
         private static void SearchDir(string pattern, string path, Action<int> progress, Func<bool> cancel)
         {
-            try
+            string[] dirs = Directory.GetDirectories(path);
+            SearchFilesInDir(pattern, path, progress, cancel);
+
+            foreach (string dir in dirs)
             {
-                string[] dirs = Directory.GetDirectories(path);
-                SearchFilesInDir(pattern, path, progress, cancel);
+                if (cancel())
+                    return;
 
-                foreach (string dir in dirs)
+                CurrentSearchDir = dir;
+                OnChangeDirectory(new EventArgs());
+
+                try
                 {
-                    if (cancel())
-                        return;
-
-                    CurrentSearchDir = dir;
-                    OnChangeDirectory(new EventArgs());
-
                     SearchFilesInDir(pattern, dir, progress, cancel);
+                }
+                catch (Exception ex)
+                {                   
+                    MessageBox.Show(ex.Message.ToString());                    
+                }
+                try
+                {
                     SearchDir(pattern, dir, progress, cancel);
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message.ToString());
+                catch (Exception ex)
+                {                   
+                   MessageBox.Show(ex.Message.ToString());
+                }
             }
         }
 

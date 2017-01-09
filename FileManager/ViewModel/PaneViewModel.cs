@@ -45,24 +45,7 @@ namespace FileManager.ViewModel
                 _selectedItems = value;
                 OnPropertyChanged("SelectedItems");
             }
-        }
-
-        //public List<string> FoundItems
-        //{
-        //    get
-        //    {
-        //        if (_foundItems == null)
-        //        {
-        //            _foundItems = new List<string>();
-        //        }
-        //        return _foundItems;
-        //    }
-        //    set
-        //    {
-        //        _foundItems = value;
-        //        OnPropertyChanged("FoundItems");
-        //    }
-        //}
+        }      
 
         public SystemFileItem CurrentItem
         {
@@ -81,8 +64,7 @@ namespace FileManager.ViewModel
             set
             {
                 _currentDrive = value;
-                CurrentItem = _currentDrive;
-                //RefreshDrivers();
+                CurrentItem = _currentDrive;                
                 OnPropertyChanged("CurrentDrive");
             }
         }
@@ -293,7 +275,8 @@ namespace FileManager.ViewModel
         public void OnNeedsUpdateSource(EventArgs e)
         {
             var handler = NeedsUpdateSource;
-            if (handler != null) handler(this, e);
+            if (handler != null)
+                handler(this, e);
         }      
     }
 }

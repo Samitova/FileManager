@@ -12,14 +12,17 @@ namespace FileManager.ViewModel
 {
     class SearchViewModel: ViewModelBase
     {
+        public PaneViewModel PaneVM { get; set; }
         public AsyncRelayCommand SearchCommand { get; set; }
         public RelayCommand CloseCommand { get; set; }
         public RelayCommand StopCommand { get; set; }
         public SearchView CurrentWindow { get; set; }
+        
 
         private string _searchingPath;
         private string _searchingPattern;
         private string _currentSearchingDirectory;
+        private string _selectedFoundFile;
         private List<string> _foundFiles;
        
         public string SearchingPath
@@ -31,7 +34,7 @@ namespace FileManager.ViewModel
                 OnPropertyChanged("SearchingPath");
             }
         }
-
+             
         public string SearchingPattern
         {
             get { return _searchingPattern; }
@@ -49,6 +52,16 @@ namespace FileManager.ViewModel
             {
                 _currentSearchingDirectory = value;
                 OnPropertyChanged("CurrentSearchingDirectory");
+            }
+        }
+
+        public string SelectedFoundFile
+        {
+            get { return _selectedFoundFile; }
+            set
+            {
+                _selectedFoundFile = value;
+                OnPropertyChanged("SelectedFoundFile");
             }
         }
 
@@ -73,8 +86,9 @@ namespace FileManager.ViewModel
         /// ctor
         /// </summary>
         /// <param name="paneViewModel"></param>
-        public SearchViewModel()
+        public SearchViewModel(PaneViewModel paneVM)
         {
+            PaneVM = paneVM;
             SearchCommand = new AsyncRelayCommand(SearchFiles);
             CloseCommand = new RelayCommand(Close);
             StopCommand = new RelayCommand(StopSearching);
@@ -83,17 +97,7 @@ namespace FileManager.ViewModel
             SearchingPath = @"c:\";             
         }
 
-        /// <summary>
-        /// Stop searching if command executes
-        /// </summary>
-        private void StopSearching()
-        {
-            if (SearchCommand.IsExecuting)
-            {
-                SearchCommand.IsCancellationRequested = true;
-            }
-        }
-
+      
         /// <summary>
         /// Init Searching files
         /// </summary>
@@ -110,6 +114,17 @@ namespace FileManager.ViewModel
         }
 
         /// <summary>
+        /// Stop searching if command executes
+        /// </summary>
+        private void StopSearching()
+        {
+            if (SearchCommand.IsExecuting)
+            {
+                SearchCommand.IsCancellationRequested = true;
+            }
+        }
+
+        /// <summary>
         /// Close searching window
         /// </summary>
         private void Close()
@@ -117,6 +132,20 @@ namespace FileManager.ViewModel
             StopSearching();
 
             CurrentWindow.Close();
-        }     
+        }
+
+        /// <summary>
+        /// On double click go to selected file directory
+        /// </summary>
+        internal void GoToSelectedFile()
+        {
+            if (SelectedFoundFile != null)
+            {
+                MyDirInfo dir = new MyDirInfo(FileSystemProvider.GetFile(SelectedFoundFile).Directory);
+                PaneVM.CurrentItem = dir;
+                CurrentWindow.Close();
+            }            
+        }
+
     }
 }
