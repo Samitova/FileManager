@@ -23,8 +23,7 @@ namespace FileManager.ViewModel
         private SystemFileItem _currentItem;
         private IList<SystemFileItem> _drives;
         private IList<SystemFileItem> _visibleItems;
-        private IList<SystemFileItem> _selectedItems;
-        //private List<string> _foundItems;
+        private IList<SystemFileItem> _selectedItems;        
 
         public string DirectoryToCopy { get; set; }
 
@@ -52,8 +51,11 @@ namespace FileManager.ViewModel
             get { return _currentItem; }
             set
             {
-                _currentItem = value;
-                RefreshVisibleItems();
+                var temp = _currentItem;
+
+                _currentItem = value; 
+                if(!value.Equals(temp))               
+                    RefreshVisibleItems();
                 OnPropertyChanged("CurrentItem");
             }
         }
@@ -63,9 +65,13 @@ namespace FileManager.ViewModel
             get { return _currentDrive; }
             set
             {
-                _currentDrive = value;
-                CurrentItem = _currentDrive;                
-                OnPropertyChanged("CurrentDrive");
+                if (value != null)
+                {
+                    _currentDrive = value;
+                    if (_currentDrive != null)
+                        CurrentItem = _currentDrive;                   
+                    OnPropertyChanged("CurrentDrive");
+                }                   
             }
         }
 
@@ -82,7 +88,7 @@ namespace FileManager.ViewModel
             set
             {
                 _drives = value;
-                OnPropertyChanged("LogicalDrives");
+                OnPropertyChanged("LogicalDrives");               
             }
         }
 
@@ -112,8 +118,7 @@ namespace FileManager.ViewModel
         public PaneViewModel()
         {
             RefreshDrivers();
-            CurrentDrive = new MyDriveInfo(FileSystemProvider.GetDrive(@"c:\"));
-            CurrentItem = CurrentDrive;
+            CurrentDrive = new MyDriveInfo(FileSystemProvider.GetDrive(@"C:\"));            
         }
 
         /// <summary>
@@ -121,7 +126,7 @@ namespace FileManager.ViewModel
         /// </summary>
         public void RefreshDrivers()
         {
-            LogicalDrives = FileSystemProvider.GetLocalDrives().Select(dir => new MyDriveInfo(dir)).ToList<SystemFileItem>();
+            LogicalDrives = FileSystemProvider.GetLocalDrives().Select(dir => new MyDriveInfo(dir)).ToList<SystemFileItem>(); 
         }
 
         /// <summary>
@@ -160,8 +165,7 @@ namespace FileManager.ViewModel
         /// </summary>
         /// <param name="selectedItems">selectedItems</param>
         public void Move(Action<int> progress, Func<bool> cancel)
-        {
-            int filesCount = GetFilesCount();
+        {            
             int counter = 0;
 
             foreach (SystemFileItem item in SelectedItems)
@@ -172,7 +176,7 @@ namespace FileManager.ViewModel
                     return;
                 }
                 item.Move(DirectoryToCopy);
-                progress(counter += 100 / filesCount);
+                progress(counter += 100 / SelectedItems.Count);
                 System.Threading.Thread.Sleep(1000);
             }
             OnNeedsUpdateSource(new EventArgs());
@@ -184,7 +188,6 @@ namespace FileManager.ViewModel
         /// <param name="selectedItems">selectedItems</param>
         public void Delete(Action<int> progress, Func<bool> cancel)
         {
-            int filesCount = GetFilesCount();
             int counter = 0;
 
             foreach (SystemFileItem item in SelectedItems)
@@ -195,7 +198,7 @@ namespace FileManager.ViewModel
                     return;
                 }
                 item.Delete();
-                progress(counter += 100 / filesCount);
+                progress(counter += 100 / SelectedItems.Count);
                 System.Threading.Thread.Sleep(2000);
             }
             OnNeedsUpdateSource(new EventArgs());
@@ -206,8 +209,7 @@ namespace FileManager.ViewModel
         /// </summary>
         /// <param name="selectedItems">selectedItems</param>
         internal void Copy(Action<int> progress, Func<bool> cancel)
-        {
-            int filesCount = GetFilesCount();
+        {           
             int counter = 0;
 
             foreach (SystemFileItem item in SelectedItems)
@@ -218,25 +220,11 @@ namespace FileManager.ViewModel
                     return;
                 }
                 item.Copy(DirectoryToCopy);
-                progress(counter += 100 / filesCount);
+                progress(counter += 100 / SelectedItems.Count);
                 System.Threading.Thread.Sleep(2000);
             }
             OnNeedsUpdateSource(new EventArgs());
-        }
-
-        /// <summary>
-        /// Get totlal files count of Selected Items
-        /// </summary>        
-        /// <returns></returns>
-        public int GetFilesCount()
-        {
-            int filesCount = 0;
-            foreach (SystemFileItem item in SelectedItems)
-            {
-                filesCount += item.TotalSubFilesCount;
-            }
-            return filesCount;
-        }
+        }      
 
         /// <summary>
         /// Get details about system item

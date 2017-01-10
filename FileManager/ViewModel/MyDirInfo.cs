@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Windows;
 using FileManager.Model;
-using System.Security;
 
 namespace FileManager.ViewModel
 {
@@ -117,7 +116,7 @@ namespace FileManager.ViewModel
                 }
             }
             catch (IOException ex)
-            {
+            {                
                 MessageBox.Show(ex.Message.ToString());
             }
             catch (UnauthorizedAccessException ex)
@@ -307,7 +306,6 @@ namespace FileManager.ViewModel
 
             return childrenDirList.Concat(FileSystemProvider.GetChildrenFiles(Path).Select(dir => new MyFileInfo(dir)).ToList<SystemFileItem>()).ToList();
         }
-
 
         public override void Execute()
         { }

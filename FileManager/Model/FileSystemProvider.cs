@@ -11,14 +11,9 @@ namespace FileManager.Model
     {
         public static event EventHandler FoundItem;
         public static event EventHandler ChangeDirectory;
-
-        public static List<string> FoundItems { get; set; }
+               
         public static string CurrentSearchDir { get; set; }
-
-        static FileSystemProvider()
-        {
-            FoundItems = new List<string>();
-        }
+        public static string CurrentFoundFile { get; set; }               
 
         /// <summary>
         /// Get the local drivers of the system
@@ -106,8 +101,7 @@ namespace FileManager.Model
                 return;
             }
             else
-            {
-                FoundItems.Clear();
+            {                
                 SearchDir(pattern, path, progress, cancel);
             }
         }
@@ -137,16 +131,16 @@ namespace FileManager.Model
                     SearchFilesInDir(pattern, dir, progress, cancel);
                 }
                 catch (Exception ex)
-                {                   
-                    MessageBox.Show(ex.Message.ToString());                    
+                {
+                    Console.WriteLine(ex.Message.ToString());                    
                 }
                 try
                 {
                     SearchDir(pattern, dir, progress, cancel);
                 }
                 catch (Exception ex)
-                {                   
-                   MessageBox.Show(ex.Message.ToString());
+                {
+                    Console.WriteLine(ex.Message.ToString());
                 }
             }
         }
@@ -160,17 +154,22 @@ namespace FileManager.Model
         /// <param name="cancel"></param>
         private static void SearchFilesInDir(string pattern, string dir, Action<int> progress, Func<bool> cancel)
         {
+            EventArgs args = new EventArgs();
             string[] files = Directory.GetFiles(dir, pattern);
             foreach (string file in files)
             {
                 if (cancel())
                     return;
 
-                FoundItems.Add(file);
-                OnFoundItem(new EventArgs());
+                CurrentFoundFile = file;
+                OnFoundItem(args);
             }
         }
 
+        /// <summary>
+        /// Occurs when file is found
+        /// </summary>
+        /// <param name="e"></param>
         public static void OnFoundItem(EventArgs e)
         {
             var handler = FoundItem;
@@ -178,7 +177,10 @@ namespace FileManager.Model
                 handler(null, e);
         }
 
-
+        /// <summary>
+        /// Occurs when dir is changed during searching
+        /// </summary>
+        /// <param name="e"></param>
         private static void OnChangeDirectory(EventArgs e)
         {
             var handler = ChangeDirectory;

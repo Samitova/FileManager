@@ -13,7 +13,10 @@ namespace FileManager.View
     /// Логика взаимодействия для Pane.xaml
     /// </summary>
     public partial class Pane : UserControl
-    {        
+    {
+        public event EventHandler SetFocusedPane;
+        public event EventHandler NeedsUpdateSource;
+       
         internal PaneViewModel PaneVM { get; set; }
         internal string DirectoryToCopy {          
             set
@@ -22,16 +25,12 @@ namespace FileManager.View
             }
         }
 
-        public event EventHandler SetFocusedPane;       
-
         public void OnSetFocusedDataGrid(EventArgs e)
         {
             var handler = SetFocusedPane;
             if (handler != null) handler(this, e);
         }
-
-        public event EventHandler NeedsUpdateSource;
-
+       
         public void OnNeedsUpdateSource(EventArgs e)
         {
             var handler = NeedsUpdateSource;
@@ -111,5 +110,12 @@ namespace FileManager.View
         {
             PaneVM.OpenCurrentItem();
         }
+
+        private void driveBox_DropDownOpened(object sender, EventArgs e)
+        {
+            var index = driveBox.SelectedIndex;
+            PaneVM.RefreshDrivers();
+            driveBox.SelectedIndex = index;
+        }               
     }
 }

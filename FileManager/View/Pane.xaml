@@ -4,9 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FileManager.View"
+             xmlns:converter="clr-namespace:FileManager.ViewModel.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
+        <converter:IsStringNonemptyConverter x:Key="ToolTipVisibilityConveter"/>
         <Style x:Key="ColumnTextName"
             TargetType="{x:Type TextBlock}">
             <Setter Property="Padding" Value="5"/>
@@ -32,12 +34,21 @@
             <ComboBox  x:Name="driveBox" 
                   ItemsSource="{Binding LogicalDrives}"
                   DisplayMemberPath="Name"              
-                  SelectedItem="{Binding CurrentDrive, Mode=TwoWay}"
-                  SelectedIndex="0"
+                  SelectedItem="{Binding CurrentDrive, Mode=TwoWay}"                  
                   HorizontalAlignment="Left" Margin="2,2,0,0"
                   VerticalAlignment="Top" Width="49" 
-                  Background="White" Height="22"/>
-            <Label x:Name="pathLabel" Content="{Binding CurrentItem.Path}" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Top" Width="242" Height="25"/>
+                  Background="White" Height="22"  DropDownOpened="driveBox_DropDownOpened"/>
+            
+            <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="22" Width="369"
+                  Margin="5,2,0,0" 
+                  HorizontalScrollBarVisibility="Hidden" 
+                  TextWrapping="NoWrap"  
+                  Text="{Binding CurrentItem.Path}" 
+                  VerticalAlignment="Top" 
+                  ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
+                  ToolTipService.IsEnabled="{Binding Text, RelativeSource={RelativeSource Self}, 
+                  Converter={StaticResource ToolTipVisibilityConveter}}"/>
+
         </StackPanel>
 
         <DataGrid Grid.Row="2" x:Name="dataGrid"                      
@@ -135,8 +146,8 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                
+
             </DataGrid.Columns>
         </DataGrid>
-    </Grid>
+       </Grid>
 </UserControl>

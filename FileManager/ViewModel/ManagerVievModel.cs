@@ -71,7 +71,7 @@ namespace FileManager.ViewModel
         /// </summary>
         private void StartMove()
         {
-            string message = $"Do you wand to move {CurrentPaneViewModel.GetFilesCount()} files?";
+            string message = $"Do you wand to move {CurrentPaneViewModel.SelectedItems.Count} files/directories?";
             InitProgressWindow(message, AsyncMoveCommand);
         }
 
@@ -80,7 +80,7 @@ namespace FileManager.ViewModel
         /// </summary>
         private void StartDelete()
         {
-            string message = $"Do you wand to delete {CurrentPaneViewModel.GetFilesCount()} files?";
+            string message = $"Do you wand to delete {CurrentPaneViewModel.SelectedItems.Count} files/directories?";
             InitProgressWindow(message, AsyncDeleteCommand);
         }
 
@@ -89,7 +89,7 @@ namespace FileManager.ViewModel
         /// </summary>
         public void StartCopy()
         {
-            string message = $"Do you wand to copy {CurrentPaneViewModel.GetFilesCount()} files?";
+            string message = $"Do you wand to copy {CurrentPaneViewModel.SelectedItems.Count} files/directories?";
             InitProgressWindow(message, AsyncCopyCommand);            
         }
 
