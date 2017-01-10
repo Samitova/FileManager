@@ -19,6 +19,7 @@
         <KeyBinding Command="{Binding CreateCommand}" Key="F7"/>
         <KeyBinding Command="{Binding StartDeleteCommand}" Key="F8"/>
         <KeyBinding Command="{Binding DetailsCommand}" Key="F9"/>
+        <KeyBinding Command="{Binding StartSearchCommand}" Key="F10"/>
     </Window.InputBindings>
 
     <Grid x:Name="OuterGrid">
