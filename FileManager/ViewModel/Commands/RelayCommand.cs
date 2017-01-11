@@ -91,20 +91,22 @@ namespace FileManager.ViewModel.Commands
             }
         }
 
+        /// <summary>
+        /// Call the Executed event
+        /// </summary>
+        /// <param name="args"></param>
         protected void OnExecuted(EventArgs args)
         {
-            EventHandler executed = Executed;
-
-            if (executed != null)
-                executed(this, args);
+            Executed?.Invoke(this, args);
         }
 
+        /// <summary>
+        /// Call the Executing event
+        /// </summary>
+        /// <param name="args"></param>
         protected void OnExecuting(EventArgs args)
         {
-            EventHandler executing = Executing;
-            
-            if (executing != null)
-                executing(this, args);
+            Executing?.Invoke(this, args);           
         }
 
         /// <summary>
@@ -113,10 +115,7 @@ namespace FileManager.ViewModel.Commands
         /// <param name="propertyName">The property name</param>
         protected void OnPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler propertyChanged = PropertyChanged;
-
-            if (propertyChanged != null)
-                propertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

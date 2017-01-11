@@ -43,7 +43,7 @@ namespace FileManager.View
         public Pane()
         {           
             InitializeComponent();
-            PaneVM = new PaneViewModel();
+            PaneVM = new PaneViewModel();           
             this.Loaded += new RoutedEventHandler(ViewLoaded);           
         }
 

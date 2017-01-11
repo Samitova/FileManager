@@ -33,12 +33,12 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <!--Display the  left side pane -->
-            <local:Pane x:Name="_leftPane" Grid.Column="0" Grid.Row="0" PreviewMouseLeftButtonDown="LeftPane_PreviewMouseLeftButtonDown" NeedsUpdateSource="RefreshView"  SetFocusedPane="SetCurrentFocusedPane" ></local:Pane>
+            <local:Pane x:Name="_leftPane" Grid.Column="0" Grid.Row="0" PreviewMouseLeftButtonDown="LeftPane_PreviewMouseLeftButtonDown" NeedsUpdateSource="OnNeedRefreshView"  SetFocusedPane="OnChangedFocusedPane" ></local:Pane>
 
             <GridSplitter Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" Width="3" Background="Gray"/>
 
             <!--Display the right side pane-->
-            <local:Pane x:Name="_rightPane"  Grid.Column="1" Grid.Row="0"  PreviewMouseLeftButtonDown="RightPane_PreviewMouseLeftButtonDown" NeedsUpdateSource="RefreshView" SetFocusedPane="SetCurrentFocusedPane" ></local:Pane>
+            <local:Pane x:Name="_rightPane"  Grid.Column="1" Grid.Row="0"  PreviewMouseLeftButtonDown="RightPane_PreviewMouseLeftButtonDown" NeedsUpdateSource="OnNeedRefreshView" SetFocusedPane="OnChangedFocusedPane" ></local:Pane>
         </Grid>
         <Border Grid.Row="1" BorderThickness="1" BorderBrush="Silver">
             <!--Display the panel with command buttons-->

@@ -172,9 +172,7 @@ namespace FileManager.Model
         /// <param name="e"></param>
         public static void OnFoundItem(EventArgs e)
         {
-            var handler = FoundItem;
-            if (handler != null) 
-                handler(null, e);
+            FoundItem?.Invoke(null, e);            
         }
 
         /// <summary>
@@ -183,9 +181,7 @@ namespace FileManager.Model
         /// <param name="e"></param>
         private static void OnChangeDirectory(EventArgs e)
         {
-            var handler = ChangeDirectory;
-            if (handler != null)
-                handler(null, e);
+            ChangeDirectory?.Invoke(null, e);            
         }
     }
 }

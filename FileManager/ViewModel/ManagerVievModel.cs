@@ -43,8 +43,6 @@ namespace FileManager.ViewModel
             LeftPaneViewModel = new PaneViewModel();
             RightPaneViewModel = new PaneViewModel();
 
-            CurrentPaneViewModel = LeftPaneViewModel;
-
             InitCommands();
         }
 
@@ -71,8 +69,12 @@ namespace FileManager.ViewModel
         /// </summary>
         private void StartMove()
         {
-            string message = $"Do you wand to move {CurrentPaneViewModel.SelectedItems.Count} files/directories?";
-            InitProgressWindow(message, AsyncMoveCommand);
+            if (CurrentPaneViewModel != null)
+            {
+                string message = $"Do you wand to move {CurrentPaneViewModel.SelectedItems.Count} files/directories?";
+                InitProgressWindow(message, AsyncMoveCommand);
+            }
+          
         }
 
         /// <summary>
@@ -80,8 +82,11 @@ namespace FileManager.ViewModel
         /// </summary>
         private void StartDelete()
         {
-            string message = $"Do you wand to delete {CurrentPaneViewModel.SelectedItems.Count} files/directories?";
-            InitProgressWindow(message, AsyncDeleteCommand);
+            if (CurrentPaneViewModel != null)
+            {
+                string message = $"Do you wand to delete {CurrentPaneViewModel.SelectedItems.Count} files/directories?";
+                InitProgressWindow(message, AsyncDeleteCommand);
+            }
         }
 
         /// <summary>
@@ -89,8 +94,11 @@ namespace FileManager.ViewModel
         /// </summary>
         public void StartCopy()
         {
-            string message = $"Do you wand to copy {CurrentPaneViewModel.SelectedItems.Count} files/directories?";
-            InitProgressWindow(message, AsyncCopyCommand);            
+            if (CurrentPaneViewModel != null)
+            {
+                string message = $"Do you wand to copy {CurrentPaneViewModel.SelectedItems.Count} files/directories?";
+                InitProgressWindow(message, AsyncCopyCommand);
+            }          
         }
 
         /// <summary>
@@ -128,7 +136,10 @@ namespace FileManager.ViewModel
         /// </summary>
         internal void GetDetails()
         {
-            CurrentPaneViewModel.GetDetails();
+            if (CurrentPaneViewModel != null)
+            {
+                CurrentPaneViewModel.GetDetails();
+            }
         }
 
         /// <summary>
@@ -136,10 +147,13 @@ namespace FileManager.ViewModel
         /// </summary>
         internal void CreateDirectory()
         {
-            string name = GetCreatingFileName();
-            if (name != null)
+            if (CurrentPaneViewModel != null)
             {
-                CurrentPaneViewModel.Create(name);                
+                string name = GetCreatingFileName();
+                if (name != null)
+                {
+                    CurrentPaneViewModel.Create(name);
+                }
             }
         }
 

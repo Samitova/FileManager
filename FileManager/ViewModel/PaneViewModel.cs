@@ -262,9 +262,7 @@ namespace FileManager.ViewModel
 
         public void OnNeedsUpdateSource(EventArgs e)
         {
-            var handler = NeedsUpdateSource;
-            if (handler != null)
-                handler(this, e);
+            NeedsUpdateSource?.Invoke(this, e);           
         }      
     }
 }

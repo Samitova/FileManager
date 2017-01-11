@@ -37,7 +37,6 @@ namespace FileManager.ViewModel
 
         public abstract List<SystemFileItem> GetChildren();
 
-
         public override bool Equals(object obj)
         {
             if (obj is SystemFileItem)

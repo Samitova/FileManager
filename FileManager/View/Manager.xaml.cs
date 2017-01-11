@@ -8,17 +8,17 @@ namespace FileManager.View
     public partial class Manager : Window
     {        
         private ManagerVievModel _managerVM;      
-        private Pane FocusedPane;     
+        private Pane _focusedPane;     
 
         public Manager()
         {
             InitializeComponent();
 
             _managerVM = new ManagerVievModel();
-            DataContext = _managerVM;
-            FocusedPane = _leftPane;
+            DataContext = _managerVM;            
             _leftPane.DataContext = _managerVM.LeftPaneViewModel;
             _rightPane.DataContext = _managerVM.RightPaneViewModel;
+          
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace FileManager.View
         /// <summary>
         /// Refresh view of dirs and files
         /// </summary>
-        private void RefreshView(object sender, EventArgs e)
+        private void OnNeedRefreshView(object sender, EventArgs e)
         {
             _rightPane.PaneVM.RefreshVisibleItems();
             _leftPane.PaneVM.RefreshVisibleItems();
@@ -55,10 +55,10 @@ namespace FileManager.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SetCurrentFocusedPane(object sender, EventArgs e)
+        private void OnChangedFocusedPane(object sender, EventArgs e)
         {
-            FocusedPane = (Pane)sender;
-            _managerVM.CurrentPaneViewModel = FocusedPane.PaneVM;  
+            _focusedPane = (Pane)sender;
+            _managerVM.CurrentPaneViewModel = _focusedPane.PaneVM;  
                 
         }
     }
